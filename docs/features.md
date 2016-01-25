@@ -8,12 +8,15 @@ Features
         + AWS Regions
 
 + Application Ecosystem
-    + Modular applications
-    + Common use-cases:
+    + Modular applications.
+    + Application store.
+        + Similar to AWS Marketplace.
+    + Pre-built common use-cases:
         + Blogs
         + Wiki
         + Customer support/relations
         + Bulletin Boards
         + Discussions
         + E-Commerce
-    + Authentication services
+    + Authentication services.
+
