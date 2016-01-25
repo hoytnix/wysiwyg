@@ -3,6 +3,8 @@ Database Management
 
 Secure, decoupled, unopinionated, cross-namespace, persistent-storage. 
 
+_Namespace_: Controller
+
 
 * Controller performs on the RDBMS, which populates the Redis (cached) store.
 
@@ -14,21 +16,21 @@ Secure, decoupled, unopinionated, cross-namespace, persistent-storage.
 
 
 
+
+
 Templates / HTML
 ----------------
 
 Just-in-time HTML compiling for super-fast content-distribution.
 
+_Namespace_: Controller
 
-* Multi-level template inheritance:
 
-```
-    ...
-```
+* Multi-level template inheritance.
 
 * All HTML is compiled to static-form before being served.
 
-* ...
+
 
 
 
@@ -37,6 +39,8 @@ Extension API
 
 Enable the user to customize their experience with trusted third-party APIs.
 
+_Namespace_: Controller
+
 
 * Extensions are user-configured through UCP.
 
@@ -44,9 +48,11 @@ Enable the user to customize their experience with trusted third-party APIs.
 
 ```
     mail:      -> SendGrid (or) MailChimp (or) Emma
-    pay:       -> Braintree (or) Stripe
+    pay:       -> Braintree (or) Stripe (or) Stellar
     analytics: -> GA (or) Clicky (or) Heap
 ```
+
+
 
 
 
@@ -55,31 +61,14 @@ Task-Queue
 
 Event-driven architecture model.
 
-
-[GET]
-
-```
-
-```
+_Namespace_: Controller
 
 
-[PUT] 
-
-```
-
-```
++ No need for thousands of WGSI applications with their own ports;
+    + The controller manages the rendering for all the requests in a restful way.
 
 
-[UPDATE]
-
-```
-
-```
 
 
-[DELETE] 
 
-```
-
-```
 
