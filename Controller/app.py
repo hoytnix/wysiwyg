@@ -15,10 +15,12 @@ from flask import Flask
 from blueprint import blueprints
 from config import Config
 
-if __name__ == '__main__':
+
+def create_app():
     config = Config()
 
     app = Flask(import_name=__name__, template_folder='./templates')
     app.config.from_object(config)
     app.register_blueprint(blueprints, url_prefix='')
-    app.run(host='0.0.0.0', port=13337, debug=True)
+
+    return app
