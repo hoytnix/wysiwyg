@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-extensions
-~~~~~~~~~~
+anavah.extensions
+~~~~~~~~~~~~~~~~~
 
 Extensions for Flask.
 

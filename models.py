@@ -10,7 +10,26 @@ models
 :license: Anavah.
 """
 
+from extensions import db
+
 from random import choice
+
+
+'''
+    Database models.
+'''
+
+class Test(db.Model):
+    __tablename__ = 'test'
+
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255), nullable=False)
+
+    @property
+    def name(self):
+        return self.value
+
+
 
 
 '''
@@ -28,37 +47,4 @@ user = choice([
         'name': 'Oloty'
     }
 ])
-
-
-
-'''
-    Key-values
-'''
-
-page_titles = {
-    # Pages
-    'index': None,
-
-    # BBS
-    'apps/bbs/index': 'BBS',
-
-    # Blog
-    'apps/blog/index': 'Blog',
-
-    # Store
-    'apps/store/index': 'Store',
-
-    # Support
-    'apps/support/index': 'Support',
-    'apps/support/faq': 'FAQs',
-    'apps/support/issues': 'Issues',
-
-    # Wiki
-    'apps/wiki/index': 'Wiki',
-
-    # UCP
-    'ucp/index': 'UCP',
-
-}
-
 
