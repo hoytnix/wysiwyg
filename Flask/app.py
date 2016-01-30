@@ -19,12 +19,13 @@ from blueprint import blueprints
 from config import Config
 from extensions import db
 
+from utils.fs import abs_fs
 from utils.imports import all_models
 
 def create_app():
     config = Config()
 
-    app = Flask(import_name=__name__, template_folder='./templates')
+    app = Flask(import_name=__name__, template_folder=abs_fs['templates'])
     app.config.from_object(config)
     app.register_blueprint(blueprints, url_prefix='')
 

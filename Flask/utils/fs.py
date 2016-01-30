@@ -21,6 +21,7 @@ for dir_path, dir_names, file_names in os.walk(abs_app, topdown=False):
     dir_relative = dir_path.replace(abs_app, '')[1:] # Without beginning /
     if '__pycache__' in dir_relative:
         continue
+    abs_fs[dir_relative] = dir_path
     for file_name in file_names:
         if dir_relative.__len__() > 0:
             key = '{}/{}'.format(dir_relative, file_name)
