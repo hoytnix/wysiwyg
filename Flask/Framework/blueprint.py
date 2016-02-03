@@ -12,18 +12,18 @@ M(V)C.
 
 from flask import Blueprint, render_template
 
-from models import bootstrap_template, user
+from .models import Site, SiteSetting, user
 
 
 blueprints = Blueprint('blueprints', __name__, template_folder='templates/pages')
 
 @blueprints.route('/')
-def index():
+def site_list():
+    sites = Site.query.all()
     c = {
-        'title': 'Index',
-        'template': bootstrap_template,
         'user': user,
     }
-    return render_template('index.html', **c)
+    #print(c['settings'])
+    return render_template('site_list.html', sites=sites, **c)
 
 

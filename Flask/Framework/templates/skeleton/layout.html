@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+{% block head %}
+<head>
+    <title>{% if title %}{{ title }} - {% endif %}Anavah</title>
+    {{ settings }}
+    {% include 'assets/_css.html' %}
+    {% include 'assets/css.html' %}
+</head>
+{% endblock head %}
+
+{% block body %}
+<body>
+    {% include 'skeleton/top_nav.html' %}
+    
+    {% block container %}
+    <div class="container-fluid">
+        <h1>{% if title %}{{ title }}{% else %}Anavah{% endif %}</h1>
+        <hr>
+
+        {% block content %}{% endblock content %} 
+    </div>
+    {% endblock container %}
+
+    {% include 'assets/_js.html' %}
+    {% include 'assets/js.html' %}
+</body>
+{% endblock body %}
+</html>

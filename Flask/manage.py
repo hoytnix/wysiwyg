@@ -14,9 +14,13 @@ Having a task-queue and self-healing architecture should depreceate this.
 
 import click
 
-from app import create_app
-from extensions import db
-from utils.imports import all_models
+from flask import current_app
+
+from Framework.app import create_app
+from Framework.extensions import db
+from Framework.utils.imports import all_models
+from Framework.utils.populate import populate_all
+
 
 
 @click.group()
@@ -32,7 +36,8 @@ def run_server():
     app.run(host='0.0.0.0', port=13337, debug=True)
 
 @cli.command('resetdb')
-def resetdb():
+@click.option('--fix', is_flag=True)
+def resetdb(fix):
     models = all_models()
 
     app = create_app()
@@ -40,11 +45,11 @@ def resetdb():
         db.drop_all()
         db.create_all()
 
-@cli.command('test')
-def test():
-    from utils.fs import abs_fs
+    with app.app_context():
+        if fix:
+            populate_all()
 
-    print(abs_fs)
+
 
 if __name__ == '__main__':
     cli()

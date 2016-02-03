@@ -1,0 +1,11 @@
+{% extends 'skeleton/layout.html' %}
+
+{% block content %}
+
+<ul>
+{% for site in sites %}
+    <li>{{ site.href|safe }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
