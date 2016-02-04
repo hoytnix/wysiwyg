@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-models
-~~~~~~
+anavah.models
+~~~~~~~~~~~~~
 
 (M)VC.
 
@@ -13,6 +13,7 @@ models
 from flask import current_app
 
 from .extensions import db
+from .utils.helpers import md5_hash
 
 from random import choice
 
@@ -25,6 +26,13 @@ class Site(db.Model):
     __tablename__ = 'sites'
 
     id = db.Column(db.Integer, primary_key=True)
+
+    def settings_as_dict(self):
+        query = SiteSetting.query.filter_by(site_id=self.id).all()
+        struct = {}
+        for setting in query:
+            struct[setting.key] = setting.value
+        return struct
 
     def setting_value(self, key):
         return SiteSetting.query. \
@@ -40,9 +48,27 @@ class Site(db.Model):
             site_title = self.setting_value('Title')
         )
 
+    @property
+    def id_hash(self):
+        return md5_hash(self.id)
+
     def __init__(self):
         db.session.add(self)
         db.session.commit()
+
+
+class SiteRoute(db.Model):
+    __tablename__ = 'site_routes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, path):
+        self.path = path
+
+        db.session.add(self)
+        db.session.commit()
+
 
 class SiteSetting(db.Model):
     __tablename__ = 'site_settings'
@@ -68,15 +94,10 @@ class SiteSetting(db.Model):
     Randomized data models.
 '''
 
-bootstrap_template = choice([
+def bootstrap_template():
+    return choice([
     'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal', 'lumen',
     'paper', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab',
     'superhero', 'united', 'yeti'
-])
-
-user = choice([
-    {
-        'name': 'Oloty'
-    }
-])
+    ])
 

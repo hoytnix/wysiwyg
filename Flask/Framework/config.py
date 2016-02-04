@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-config
-~~~~~~~~~~~~~~~~~~~~~~~
+anavah.config
+~~~~~~~~~~~~~
 
 Flask config object.
 

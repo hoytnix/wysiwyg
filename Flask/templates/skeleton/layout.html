@@ -2,7 +2,7 @@
 <html>
 {% block head %}
 <head>
-    <title>{% if title %}{{ title }} - {% endif %}Anavah</title>
+    <title>{% if Title %}{{ Title }} - {% endif %}Anavah</title>
     {{ settings }}
     {% include 'assets/_css.html' %}
     {% include 'assets/css.html' %}
@@ -15,7 +15,7 @@
     
     {% block container %}
     <div class="container-fluid">
-        <h1>{% if title %}{{ title }}{% else %}Anavah{% endif %}</h1>
+        <h1>{% if Title %}{{ Title }}{% else %}Anavah{% endif %}</h1>
         <hr>
 
         {% block content %}{% endblock content %} 

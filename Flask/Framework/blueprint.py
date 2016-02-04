@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-blueprints
-~~~~~~~~~~
+anavah.blueprints
+~~~~~~~~~~~~~~~~~
 
 M(V)C.
 
@@ -12,18 +12,19 @@ M(V)C.
 
 from flask import Blueprint, render_template
 
-from .models import Site, SiteSetting, user
+from .models import Site, SiteSetting
+from .utils.fs import abs_fs
 
-
-blueprints = Blueprint('blueprints', __name__, template_folder='templates/pages')
+blueprints = Blueprint('blueprints', __name__, template_folder=abs_fs['templates/pages'])
 
 @blueprints.route('/')
 def site_list():
     sites = Site.query.all()
-    c = {
-        'user': user,
-    }
-    #print(c['settings'])
-    return render_template('site_list.html', sites=sites, **c)
+    return render_template('site_list.html', sites=sites)
 
 
+@blueprints.route('/<site_url>')
+def site_detail(site_url):
+    site = Site.query.filter_by(id=site_url).first()
+    settings = site.settings_as_dict()
+    return render_template('site_detail.html', site=site, **settings)

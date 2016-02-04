@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-app
-~~~
+anavah.app
+~~~~~~~~~~
 
 MV(C).
 

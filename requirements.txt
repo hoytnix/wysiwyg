@@ -1,0 +1,8 @@
+Flask==0.10.1
+Flask-Admin==1.4.0
+Flask-SQLAlchemy==2.1
+
+PyMySQL==0.7.1
+unidecode==0.04.19
+
+click==6.2

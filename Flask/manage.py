@@ -36,7 +36,7 @@ def run_server():
     app.run(host='0.0.0.0', port=13337, debug=True)
 
 @cli.command('resetdb')
-@click.option('--fix', is_flag=True)
+@click.option('-f', '--fix', is_flag=True)
 def resetdb(fix):
     models = all_models()
 
@@ -49,6 +49,11 @@ def resetdb(fix):
         if fix:
             populate_all()
 
+@cli.command('test')
+def test():
+    from Framework.utils.fs import abs_fs
+
+    print(abs_fs)
 
 
 if __name__ == '__main__':

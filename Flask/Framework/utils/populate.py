@@ -33,11 +33,12 @@ def build_sites():
         Site()
 
 def build_site_settings():
-    for i in range(10):
-        site_id = i + 1
+    sites = Site.query.all()
+    for site in sites:
         fixture_data = [
-            ('Title', 'Anavah {}'.format(site_id)),
-            ('Theme', bootstrap_template)
+            ('Title', 'Anavah {}'.format(site.id)),
+            ('Theme', bootstrap_template()),
+            ('Hash', site.id_hash)
         ]
         for fixture_group in fixture_data:
-            SiteSetting(site_id = site_id, key=fixture_group[0], value=fixture_group[1])
+            SiteSetting(site_id = site.id, key=fixture_group[0], value=fixture_group[1])
