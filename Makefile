@@ -9,6 +9,11 @@ ifndef TRAVIS
 	PYTHON_MINOR ?= 5
 endif
 
+# Test settings
+UNIT_TEST_COVERAGE := 88
+INTEGRATION_TEST_COVERAGE := 47
+COMBINED_TEST_COVERAGE := 100
+
 # System paths
 PLATFORM := $(shell python -c 'import sys; print(sys.platform)')
 ifneq ($(findstring win32, $(PLATFORM)), )
@@ -63,7 +68,6 @@ PYREVERSE := $(BIN_)pyreverse
 NOSE := $(BIN_)nosetests
 PYTEST := $(BIN_)py.test
 COVERAGE := $(BIN_)coverage
-COVERAGE_SPACE := $(BIN_)coverage.space
 SNIFFER := $(BIN_)sniffer
 HONCHO := $(ACTIVATE) && honcho
 
@@ -77,12 +81,23 @@ ALL_FLAG := $(ENV)/.all
 
 # Main Targets #################################################################
 
+.PHONY: all
+all: depends doc $(ALL_FLAG)
+$(ALL_FLAG): $(SOURCES)
+	$(MAKE) check
+	touch $(ALL_FLAG)  # flag to indicate all setup steps were successful
+
 .PHONY: ci
 ifdef TRAVIS
 ci: check test tests
 else
 ci: doc check test tests
 endif
+
+.PHONY: watch
+watch: depends .clean-test
+	@ rm -rf $(FAILED_FLAG)
+	$(SNIFFER)
 
 # Development Installation #####################################################
 
@@ -104,13 +119,13 @@ depends: depends-ci depends-doc depends-dev
 .PHONY: depends-ci
 depends-ci: env Makefile $(DEPENDS_CI_FLAG)
 $(DEPENDS_CI_FLAG): Makefile
-	$(PIP) install --upgrade pep8 pep257 pylint coverage coverage.space pytest pytest-describe pytest-expecter pytest-cov pytest-random pytest-runfailed
+	$(PIP) install --upgrade pep8 pep257 pylint coverage pytest pytest-describe pytest-expecter pytest-cov pytest-random pytest-runfailed
 	@ touch $(DEPENDS_CI_FLAG)  # flag to indicate dependencies are installed
 
 .PHONY: depends-doc
 depends-doc: env Makefile $(DEPENDS_DOC_FLAG)
 $(DEPENDS_DOC_FLAG): Makefile
-	$(PIP) install --upgrade docutils readme pdoc mkdocs pygments
+	$(PIP) install --upgrade pylint docutils readme pdoc mkdocs pygments
 	@ touch $(DEPENDS_DOC_FLAG)  # flag to indicate dependencies are installed
 
 .PHONY: depends-dev
@@ -190,8 +205,7 @@ pep257: depends-ci
 
 .PHONY: pylint
 pylint: depends-ci
-	$(PYLINT) $(PACKAGE) --rcfile=.pylintrc
-	$(PYLINT) tests --rcfile=.pylintrc --disable=duplicate-code
+	$(PYLINT) $(PACKAGE) tests --rcfile=.pylintrc
 
 .PHONY: fix
 fix: depends-dev
@@ -202,10 +216,10 @@ fix: depends-dev
 RANDOM_SEED ?= $(shell date +%s)
 
 PYTEST_CORE_OPTS := --doctest-modules -r xXw -vv
-PYTEST_COV_OPTS := --cov=$(PACKAGE) --no-cov-on-fail --cov-report=term-missing --cov-report=html
+PYTEST_COV_OPTS := --cov=$(PACKAGE) --no-cov-on-fail --cov-report=term-missing
 PYTEST_RANDOM_OPTS := --random --random-seed=$(RANDOM_SEED)
 
-PYTEST_OPTS := $(PYTEST_CORE_OPTS) $(PYTEST_COV_OPTS)
+PYTEST_OPTS := $(PYTEST_CORE_OPTS) $(PYTEST_COV_OPTS) $(PYTEST_RANDOM_OPTS)
 PYTEST_OPTS_FAILFAST := $(PYTEST_OPTS) --failed --exitfirst
 
 FAILED_FLAG := .pytest/failed
@@ -215,7 +229,7 @@ test: test-unit
 test-unit: depends-ci
 	$(PYTEST) $(PYTEST_OPTS) $(PACKAGE)
 ifndef TRAVIS
-	$(COVERAGE_SPACE) jacebrowning/yorm unit
+	$(COVERAGE) html --directory htmlcov --fail-under=$(UNIT_TEST_COVERAGE)
 endif
 
 .PHONY: test-int
@@ -224,7 +238,7 @@ test-int: depends-ci
 	$(PYTEST) $(PYTEST_OPTS_FAILFAST) tests
 ifndef TRAVIS
 	@ rm -rf $(FAILED_FLAG)  # next time, don't run the previously failing test
-	$(COVERAGE_SPACE) jacebrowning/yorm integration
+	$(COVERAGE) html --directory htmlcov --fail-under=$(INTEGRATION_TEST_COVERAGE)
 endif
 
 .PHONY: tests test-all
@@ -234,7 +248,7 @@ test-all: depends-ci
 	$(PYTEST) $(PYTEST_OPTS_FAILFAST) $(PACKAGE) tests
 ifndef TRAVIS
 	@ rm -rf $(FAILED_FLAG)  # next time, don't run the previously failing test
-	$(COVERAGE_SPACE) jacebrowning/yorm overall
+	$(COVERAGE) html --directory htmlcov --fail-under=$(COMBINED_TEST_COVERAGE)
 endif
 
 .PHONY: read-coverage

@@ -1,0 +1,14 @@
+site_name: Flask
+site_description: I heard you like apps, so I made you an app for your apps!
+site_author: Michael Hoyt
+repo_url: https://github.com/pr0xmeh/anavah
+# google_analytics: ['XX-XXXXXXXX-XX', 'auto']
+
+theme: mkdocs
+
+pages:
+- Home: index.md
+- About:
+  - 'Release Notes': about/changes.md
+  - Contributing: about/contributing.md
+  - License: about/license.md
