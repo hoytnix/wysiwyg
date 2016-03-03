@@ -16,7 +16,8 @@ from .extensions import db
 from .utils.helpers import md5_hash
 
 from random import choice
-
+import copy
+import pprint
 
 '''
     Database models.
@@ -62,9 +63,15 @@ class SiteRoute(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(255), nullable=False)
+    parent = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, path):
+    @property
+    def child(self):
+        return SiteTemplate.query.filter_by(parent=self.id).first()
+
+    def __init__(self, path, parent):
         self.path = path
+        self.parent = parent
 
         db.session.add(self)
         db.session.commit()
@@ -89,6 +96,133 @@ class SiteSetting(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+
+class SiteTemplate(db.Model):
+    __tablename__ = 'site_templates'
+
+    id = db.Column(db.Integer, primary_key=True)
+    file = db.Column(db.String(255), nullable=False)
+    parent = db.Column(db.Integer, nullable=False)
+
+    @property
+    def element_dict(self):
+        store = {}
+        d = {
+            'self': None,
+            'children': {}
+        }
+        level = 0
+
+        # 'Rows': Highest-level in order-heirarchy, where parent = None
+        rows = TemplateElement.query. \
+                filter_by(template=self.id, parent=None). \
+                order_by(TemplateElement.order).all()
+        row_n = 0
+        for row in rows:
+            row_n += 1
+            row_key = 'row_{}'.format(row_n)
+
+            row_s = copy.deepcopy(d)
+            row_s['self'] = row
+
+            store[row_key] = row_s
+
+        # After that, elements may have an infinite nesting of children.
+        pointer = store
+        while True:
+            keys = [key for key in pointer.keys()]
+
+            for key in keys:
+                return None
+            children = row['self'].children
+            if children:
+                for child in children:
+                    k = str(child.order)
+                    row['children'][k] = copy.deepcopy(d)
+            else:
+                break
+            break
+            '''
+                # 2. Add it to the latest heirarchy level...
+                element = row['todo'][0]
+                k = str(element.order)
+                row['children'][k] = copy.deepcopy(d)
+                row['children'][k]['self'] = copy.deepcopy(element)
+                # 3. Move the item from todo to done.
+                row['todo'].remove(element)
+                # . Populate new queue.
+                row['children'][k]['todo'] = element.children
+                #
+                #row = row['children']
+            # 4. If empty queue, check for a new level.
+            '''
+        store[row_key] = row
+
+        # Verbosity, thank you.
+        pprint.pprint(store, indent=4, width=120)
+
+    @property
+    def owner(self):
+        return SiteRoute.query.get(self.parent)
+
+    def __init__(self, file, parent):
+        self.file = file
+        self.parent = parent
+
+        db.session.add(self)
+        db.session.commit()
+
+
+class TemplateElement(db.Model):
+    __tablename__ = 'template_elements'
+
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String(255), nullable=False)
+    order = db.Column(db.Integer, nullable=False)
+    template = db.Column(db.Integer, nullable=False)
+    parent = db.Column(db.Integer, nullable=True)
+
+    @property
+    def children(self):
+        return TemplateElement.query.filter_by(parent=self.id).all()
+
+    @property
+    def attribute_dict(self):
+        d = {}
+        attributes = ElementAttribute.query.filter_by(parent=self.id).all()
+        for attribute in attributes:
+            d[attribute.key] = attribute.value
+        return d
+
+    def __init__(self, template, tag, order, parent=None):
+        self.template = template
+        self.tag = tag
+        self.order = order
+
+        if parent:
+            self.parent = parent
+
+        db.session.add(self)
+        db.session.commit()
+
+
+class ElementAttribute(db.Model):
+    __tablename__ = 'element_attributes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(255), nullable=False)
+    value = db.Column(db.String(255), nullable=False)
+    parent = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, key, value, parent):
+        self.key = key
+        self.value = value
+        self.parent = parent
+
+        db.session.add(self)
+        db.session.commit()
+
 
 '''
     Randomized data models.
