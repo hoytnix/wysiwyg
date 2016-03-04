@@ -18,6 +18,7 @@ import unidecode
 
 _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
+
 def slugify(text, delim=u'-'):
     '''Returns an ASCII-only slug.
     Taken from FlaskBB. <@shanks>
@@ -46,10 +47,10 @@ def html_tags(content, tag, attributes=None):
         attr_str = ' ' + ' '.join([attr_expr.format(*attr) for attr in attributes])
     else:
         attr_str = ''
-    return '<{tag}{attr}>{content}</{tag}>'.format( \
-        tag = tag, \
-        content = content, \
-        attr = attr_str
+    return '<{tag}{attr}>{content}</{tag}>'.format(
+        tag=tag,
+        content=content,
+        attr=attr_str
     )
 
 
@@ -57,4 +58,3 @@ def md5_hash(plain):
     m = hashlib.md5()
     m.update(str(plain).encode('utf-8'))
     return m.hexdigest()
-

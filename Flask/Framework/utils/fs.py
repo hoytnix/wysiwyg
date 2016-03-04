@@ -38,4 +38,3 @@ for dir_path, dir_names, file_names in os.walk(abs_top, topdown=False):
         else:
             key = file_name
         abs_fs[key] = os.path.join(dir_path, file_name)
-

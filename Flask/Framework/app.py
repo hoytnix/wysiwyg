@@ -22,6 +22,7 @@ from .extensions import db
 from .utils.fs import abs_fs
 from .utils.imports import all_models
 
+
 def create_app():
     config = Config()
 
@@ -36,8 +37,10 @@ def create_app():
 
     return app
 
+
 def configure_blueprints(app):
     app.register_blueprint(blueprints, url_prefix='')
+
 
 def configure_extensions(app):
     # flask_sqlalchemy
@@ -48,4 +51,3 @@ def configure_extensions(app):
     admin = Admin(app, url='/admin', name='Anavah', template_mode='bootstrap3')
     for model in all_models():
         admin.add_view(ModelView(model, db.session))
-

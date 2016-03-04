@@ -10,6 +10,7 @@ Flask config object.
 :license: Anavah.
 """
 
+
 class Config:
     def __init__(self):
         # SQLAlchemy
@@ -30,5 +31,3 @@ class Config:
 
         # General
         self.DEBUG = True
-
-

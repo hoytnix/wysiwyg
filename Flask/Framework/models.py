@@ -19,9 +19,6 @@ from random import choice
 import copy
 import pprint
 
-'''
-    Database models.
-'''
 
 class Site(db.Model):
     __tablename__ = 'sites'
@@ -45,8 +42,8 @@ class Site(db.Model):
     @property
     def href(self):
         return '<a href="/{site_id}">{site_title}</a>'.format(
-            site_id = self.id,
-            site_title = self.setting_value('Title')
+            site_id=self.id,
+            site_title=self.setting_value('Title')
         )
 
     @property
@@ -116,8 +113,8 @@ class SiteTemplate(db.Model):
 
         # 'Rows': Highest-level in order-heirarchy, where parent = None
         rows = TemplateElement.query. \
-                filter_by(template=self.id, parent=None). \
-                order_by(TemplateElement.order).all()
+            filter_by(template=self.id, parent=None). \
+            order_by(TemplateElement.order).all()
         row_n = 0
         for row in rows:
             row_n += 1
@@ -228,10 +225,10 @@ class ElementAttribute(db.Model):
     Randomized data models.
 '''
 
+
 def bootstrap_template():
     return choice([
-    'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal', 'lumen',
-    'paper', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab',
-    'superhero', 'united', 'yeti'
+        'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal', 'lumen',
+        'paper', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab',
+        'superhero', 'united', 'yeti'
     ])
-

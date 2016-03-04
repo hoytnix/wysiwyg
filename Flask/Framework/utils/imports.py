@@ -27,6 +27,3 @@ def all_models():
         if inspect.isclass(obj):
             models.append(obj)
     return models
-
-
-

@@ -22,7 +22,6 @@ from Framework.utils.imports import all_models
 from Framework.utils.populate import populate_all
 
 
-
 @click.group()
 @click.version_option()
 def cli():
@@ -34,6 +33,7 @@ def cli():
 def run_server():
     app = create_app()
     app.run(host='0.0.0.0', port=13337, debug=True)
+
 
 @cli.command('resetdb')
 @click.option('-f', '--fix', is_flag=True)
@@ -48,6 +48,7 @@ def resetdb(fix):
     with app.app_context():
         if fix:
             populate_all()
+
 
 @cli.command('test')
 def test():
