@@ -1,25 +1,15 @@
-#!/usr/bin/env python
-
-"""
-anavah.utils.imports
-~~~~~~~~~~~~~~~~~~~~
-
-Because writing imports is redundant.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""Because writing imports is redundant."""
 
 import importlib
 import inspect
 
 
 def all_models():
-    '''Returns a list of model-class objects.
+    """A list of model-class objects.
 
     For some reason `__import__('Framework')` doesn't contain
     `models` as a member, so it has to be import-ed absolutely as such.
-    '''
+    """
 
     models = []
     foo = __import__('Framework.models').models

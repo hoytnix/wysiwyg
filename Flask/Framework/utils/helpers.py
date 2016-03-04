@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-
-"""
-anavah.utils.helpers
-~~~~~~~~~~~~~~~~~~~~
-
-Misc. helper functions.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""Misc. helper functions."""
 
 import re
 import hashlib
@@ -20,12 +10,13 @@ _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 
 def slugify(text, delim=u'-'):
-    '''Returns an ASCII-only slug.
+    """Return an ASCII-only slug.
+
     Taken from FlaskBB. <@shanks>
 
     :param text: Text to slugify.
     :param delim: Default '-'. Delimiter for whitespace.
-    '''
+    """
 
     text = unidecode.unidecode(text)
     result = []
@@ -35,7 +26,7 @@ def slugify(text, delim=u'-'):
 
 
 def html_tags(content, tag, attributes=None):
-    """Builds HTML tags.
+    """Form a HTML tag.
 
     :content: String between the HTML tags.
     :tag: a literal HTML tag.
@@ -52,9 +43,3 @@ def html_tags(content, tag, attributes=None):
         content=content,
         attr=attr_str
     )
-
-
-def md5_hash(plain):
-    m = hashlib.md5()
-    m.update(str(plain).encode('utf-8'))
-    return m.hexdigest()

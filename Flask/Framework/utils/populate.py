@@ -1,13 +1,8 @@
-#!/usr/bin/env python
+"""Persistent data fixtures.
 
-"""
-anavah.utils.populate
-~~~~~~~~~~~~~~~~~~~~~
-
-Persistent data for development.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
+TODO:
++   Async-like architecture.
++   Keep old data; quit dropping *everything*.
 """
 
 from ..models import Site, SiteSetting, SiteRoute, SiteTemplate, TemplateElement, ElementAttribute
@@ -23,6 +18,8 @@ display_num = 2  # Unresponsive > 3; Elements complexity as of 02-12-16
 
 
 def populate_all():
+    """Initalize the async worker."""
+
     print('Populating sites...')
     build_sites()
 
@@ -40,11 +37,15 @@ def populate_all():
 
 
 def build_sites():
+    """DEPRECEATED."""
+
     for i in range(display_num):
         Site()
 
 
 def build_site_settings():
+    """DEPRECEATED."""
+
     sites = Site.query.all()
     for site in sites:
         fixture_data = [
@@ -57,6 +58,8 @@ def build_site_settings():
 
 
 def build_routes():
+    """DEPRECEATED."""
+
     sites = Site.query.all()
     for site in sites:
         for i in range(display_num):
@@ -64,6 +67,8 @@ def build_routes():
 
 
 def build_templates():
+    """DEPRECEATED."""
+
     routes = SiteRoute.query.all()
     for route in routes:
         file = '{}.html'.format(route.id)
@@ -72,6 +77,8 @@ def build_templates():
 
 
 def build_template_elements():
+    """DEPRECEATED."""
+
     templates = SiteTemplate.query.all()
     for template in templates:
         for iteration in range(display_num):

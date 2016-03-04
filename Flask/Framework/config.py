@@ -1,18 +1,15 @@
-#!/usr/bin/env python
-
-"""
-anavah.config
-~~~~~~~~~~~~~
-
-Flask config object.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""Flask config object."""
 
 
 class Config:
+    """TODO.
+
+    + Config dict should be simple Json.
+    """
+
     def __init__(self):
+        """Depreceated."""
+
         # SQLAlchemy
         self.SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{user}:{pwd}@{host}:{port}/{db}'.format(
             user='anavah',

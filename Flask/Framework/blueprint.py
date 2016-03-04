@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-
-"""
-anavah.blueprints
-~~~~~~~~~~~~~~~~~
-
-M(V)C.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""The (V)iew in M(V)C."""
 
 from flask import Blueprint, render_template
 
@@ -21,12 +11,16 @@ blueprints = Blueprint('blueprints', __name__, template_folder=abs_fs['templates
 
 @blueprints.route('/')
 def site_list():
+    """Index Sites."""
+
     sites = Site.query.all()
     return render_template('site_list.html', sites=sites)
 
 
 @blueprints.route('/<site_url>')
 def site_detail(site_url):
+    """Query a Site, and it's properties."""
+
     site = Site.query.filter_by(id=site_url).first()
     settings = site.settings_as_dict()
     return render_template('site_detail.html', site=site, **settings)
@@ -34,6 +28,8 @@ def site_detail(site_url):
 
 @blueprints.route('/<site_url>/<path:path>')
 def route_detail(site_url, path):
+    """Query an ElementDict from a Route, and give it to the template engine."""
+
     site = Site.query.filter_by(id=site_url).first()
     settings = site.settings_as_dict()
 

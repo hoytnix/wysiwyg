@@ -1,19 +1,8 @@
-#!/usr/bin/env python
-
-"""
-anavah.models
-~~~~~~~~~~~~~
-
-(M)VC.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""The (M)odel in (M)VC."""
 
 from flask import current_app
 
 from .extensions import db
-from .utils.helpers import md5_hash
 
 from random import choice
 import copy
@@ -21,11 +10,15 @@ import pprint
 
 
 class Site(db.Model):
+    """TODO."""
+
     __tablename__ = 'sites'
 
     id = db.Column(db.Integer, primary_key=True)
 
     def settings_as_dict(self):
+        """TODO."""
+
         query = SiteSetting.query.filter_by(site_id=self.id).all()
         struct = {}
         for setting in query:
@@ -33,6 +26,8 @@ class Site(db.Model):
         return struct
 
     def setting_value(self, key):
+        """TODO."""
+
         return SiteSetting.query. \
             filter_by(site_id=self.id). \
             filter_by(key=key). \
@@ -41,21 +36,23 @@ class Site(db.Model):
 
     @property
     def href(self):
+        """TODO."""
+
         return '<a href="/{site_id}">{site_title}</a>'.format(
             site_id=self.id,
             site_title=self.setting_value('Title')
         )
 
-    @property
-    def id_hash(self):
-        return md5_hash(self.id)
-
     def __init__(self):
+        """TODO."""
+
         db.session.add(self)
         db.session.commit()
 
 
 class SiteRoute(db.Model):
+    """TODO."""
+
     __tablename__ = 'site_routes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -64,9 +61,13 @@ class SiteRoute(db.Model):
 
     @property
     def child(self):
+        """TODO."""
+
         return SiteTemplate.query.filter_by(parent=self.id).first()
 
     def __init__(self, path, parent):
+        """TODO."""
+
         self.path = path
         self.parent = parent
 
@@ -75,6 +76,8 @@ class SiteRoute(db.Model):
 
 
 class SiteSetting(db.Model):
+    """TODO."""
+
     __tablename__ = 'site_settings'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -84,9 +87,13 @@ class SiteSetting(db.Model):
 
     @property
     def name(self):
+        """TODO."""
+
         return self.key
 
     def __init__(self, site_id, key, value):
+        """TODO."""
+
         self.site_id = site_id
         self.key = key
         self.value = value
@@ -96,6 +103,8 @@ class SiteSetting(db.Model):
 
 
 class SiteTemplate(db.Model):
+    """TODO."""
+
     __tablename__ = 'site_templates'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -104,6 +113,8 @@ class SiteTemplate(db.Model):
 
     @property
     def element_dict(self):
+        """TODO."""
+
         store = {}
         d = {
             'self': None,
@@ -161,9 +172,13 @@ class SiteTemplate(db.Model):
 
     @property
     def owner(self):
+        """TODO."""
+
         return SiteRoute.query.get(self.parent)
 
     def __init__(self, file, parent):
+        """TODO."""
+
         self.file = file
         self.parent = parent
 
@@ -172,6 +187,8 @@ class SiteTemplate(db.Model):
 
 
 class TemplateElement(db.Model):
+    """TODO."""
+
     __tablename__ = 'template_elements'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -182,10 +199,14 @@ class TemplateElement(db.Model):
 
     @property
     def children(self):
+        """TODO."""
+
         return TemplateElement.query.filter_by(parent=self.id).all()
 
     @property
     def attribute_dict(self):
+        """TODO."""
+
         d = {}
         attributes = ElementAttribute.query.filter_by(parent=self.id).all()
         for attribute in attributes:
@@ -193,6 +214,8 @@ class TemplateElement(db.Model):
         return d
 
     def __init__(self, template, tag, order, parent=None):
+        """TODO."""
+
         self.template = template
         self.tag = tag
         self.order = order
@@ -205,6 +228,8 @@ class TemplateElement(db.Model):
 
 
 class ElementAttribute(db.Model):
+    """TODO."""
+
     __tablename__ = 'element_attributes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -213,6 +238,8 @@ class ElementAttribute(db.Model):
     parent = db.Column(db.Integer, nullable=False)
 
     def __init__(self, key, value, parent):
+        """TODO."""
+
         self.key = key
         self.value = value
         self.parent = parent
@@ -227,6 +254,8 @@ class ElementAttribute(db.Model):
 
 
 def bootstrap_template():
+    """TODO."""
+
     return choice([
         'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal', 'lumen',
         'paper', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab',

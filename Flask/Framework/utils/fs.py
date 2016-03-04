@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-
-"""
-anavah.utils.fs
-~~~~~~~~~~~~~~~
-
-File-system interface.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""File system index."""
 
 import os
 

@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-
-"""
-anavah.extensions
-~~~~~~~~~~~~~~~~~
-
-Extensions for Flask.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""Extensions for Flask."""
 
 from flask_sqlalchemy import SQLAlchemy
 

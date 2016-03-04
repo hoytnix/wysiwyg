@@ -1,15 +1,6 @@
-#!/usr/bin/env python
-
-"""
-manage
-~~~~~~
-
-CLI.
+"""Command line interface.
 
 Having a task-queue and self-healing architecture should depreceate this.
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
 """
 
 import click
@@ -25,12 +16,13 @@ from Framework.utils.populate import populate_all
 @click.group()
 @click.version_option()
 def cli():
-    """Doc-string.
-    """
+    """Entry-point."""
 
 
 @cli.command('start')
 def run_server():
+    """Execute the application."""
+
     app = create_app()
     app.run(host='0.0.0.0', port=13337, debug=True)
 
@@ -38,6 +30,8 @@ def run_server():
 @cli.command('resetdb')
 @click.option('-f', '--fix', is_flag=True)
 def resetdb(fix):
+    """Drop the database, and refixture it."""
+
     models = all_models()
 
     app = create_app()
@@ -52,6 +46,8 @@ def resetdb(fix):
 
 @cli.command('test')
 def test():
+    """Execute a function only reachable within the project namespace."""
+
     from Framework.utils.fs import abs_fs
 
     print(abs_fs)

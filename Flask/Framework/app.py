@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-
-"""
-anavah.app
-~~~~~~~~~~
-
-MV(C).
-
-:copyright: (c) 2016 Michael Hoyt. <@pr0xmeh>
-:license: Anavah.
-"""
+"""The (C)ontroller in MV(C)."""
 
 from flask import Flask
 
@@ -24,6 +14,11 @@ from .utils.imports import all_models
 
 
 def create_app():
+    """Create an application factory.
+
+    http://flask.pocoo.org/docs/0.10/patterns/appfactories/
+    """
+
     config = Config()
 
     # Initialize the app object.
@@ -39,10 +34,17 @@ def create_app():
 
 
 def configure_blueprints(app):
+    """Register the application blueprints.
+
+    TODO: Iterate through an index.
+    """
+
     app.register_blueprint(blueprints, url_prefix='')
 
 
 def configure_extensions(app):
+    """Register Flask's extensions."""
+
     # flask_sqlalchemy
     with app.app_context():
         db.init_app(app)
