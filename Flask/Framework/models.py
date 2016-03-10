@@ -19,7 +19,7 @@ class Site(db.Model):
     def settings_as_dict(self):
         """TODO."""
 
-        query = SiteSetting.query.filter_by(site_id=self.id).all()
+        query = Setting.query.filter_by(site_id=self.id).all()
         struct = {}
         for setting in query:
             struct[setting.key] = setting.value
@@ -28,7 +28,7 @@ class Site(db.Model):
     def setting_value(self, key):
         """TODO."""
 
-        return SiteSetting.query. \
+        return Setting.query. \
             filter_by(site_id=self.id). \
             filter_by(key=key). \
             first(). \
@@ -50,10 +50,10 @@ class Site(db.Model):
         db.session.commit()
 
 
-class SiteRoute(db.Model):
+class Route(db.Model):
     """TODO."""
 
-    __tablename__ = 'site_routes'
+    __tablename__ = 'routes'
 
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(255), nullable=False)
@@ -63,7 +63,7 @@ class SiteRoute(db.Model):
     def child(self):
         """TODO."""
 
-        return SiteTemplate.query.filter_by(parent=self.id).first()
+        return Template.query.filter_by(parent=self.id).first()
 
     def __init__(self, path, parent):
         """TODO."""
@@ -75,10 +75,10 @@ class SiteRoute(db.Model):
         db.session.commit()
 
 
-class SiteSetting(db.Model):
+class Setting(db.Model):
     """TODO."""
 
-    __tablename__ = 'site_settings'
+    __tablename__ = 'settings'
 
     id = db.Column(db.Integer, primary_key=True)
     site_id = db.Column(db.Integer, nullable=False)
@@ -102,10 +102,10 @@ class SiteSetting(db.Model):
         db.session.commit()
 
 
-class SiteTemplate(db.Model):
+class Template(db.Model):
     """TODO."""
 
-    __tablename__ = 'site_templates'
+    __tablename__ = 'templates'
 
     id = db.Column(db.Integer, primary_key=True)
     file = db.Column(db.String(255), nullable=False)
@@ -174,7 +174,7 @@ class SiteTemplate(db.Model):
     def owner(self):
         """TODO."""
 
-        return SiteRoute.query.get(self.parent)
+        return Route.query.get(self.parent)
 
     def __init__(self, file, parent):
         """TODO."""
@@ -186,10 +186,10 @@ class SiteTemplate(db.Model):
         db.session.commit()
 
 
-class TemplateElement(db.Model):
+class Element(db.Model):
     """TODO."""
 
-    __tablename__ = 'template_elements'
+    __tablename__ = 'elements'
 
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(255), nullable=False)
@@ -201,14 +201,14 @@ class TemplateElement(db.Model):
     def children(self):
         """TODO."""
 
-        return TemplateElement.query.filter_by(parent=self.id).all()
+        return Element.query.filter_by(parent=self.id).all()
 
     @property
     def attribute_dict(self):
         """TODO."""
 
         d = {}
-        attributes = ElementAttribute.query.filter_by(parent=self.id).all()
+        attributes = Attribute.query.filter_by(parent=self.id).all()
         for attribute in attributes:
             d[attribute.key] = attribute.value
         return d
@@ -227,10 +227,10 @@ class TemplateElement(db.Model):
         db.session.commit()
 
 
-class ElementAttribute(db.Model):
+class Attribute(db.Model):
     """TODO."""
 
-    __tablename__ = 'element_attributes'
+    __tablename__ = 'attributes'
 
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(255), nullable=False)
