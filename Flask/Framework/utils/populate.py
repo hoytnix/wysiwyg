@@ -5,7 +5,8 @@ TODO:
 +   Keep old data; quit dropping *everything*.
 """
 
-from ..models import Site, SiteSetting, SiteRoute, SiteTemplate, TemplateElement, ElementAttribute
+from ..extensions import fixtures
+from ..models import Site, Setting, Route, Template, Element, Attribute
 from ..models import bootstrap_template
 from .imports import all_models
 
@@ -14,81 +15,69 @@ from .imports import all_models
     build:    provides structures
 '''
 
-display_num = 2  # Unresponsive > 3; Elements complexity as of 02-12-16
+display_num = range(1)  # Unresponsive > 3
 
 
 def populate_all():
     """Initalize the async worker."""
 
-    print('Populating sites...')
-    build_sites()
+    for iteration in display_num:
+        site = fixtures.blend(Site)
+        populate_settings(site)
+        routes = populate_routes(site)
+        templates = populate_templates(routes)
+        elements = populate_elements(templates)
 
-    print('Populating site settings...')
-    build_site_settings()
+def populate_settings(site):
+    """Initialize Settings."""
 
-    print('Populating site routes...')
-    build_routes()
+    fixture_data = [
+        ('Title', 'Anavah {}'.format(site.id)),
+        ('Theme', 'superhero')
+    ]
 
-    print('Populating templates...')
-    build_templates()
-
-    print('Populating template elements...')
-    build_template_elements()
-
-
-def build_sites():
-    """DEPRECEATED."""
-
-    for i in range(display_num):
-        Site()
+    for item in fixture_data:
+        fixtures.blend(Setting, site_id=site.id, key=item[0], value=item[1])
 
 
-def build_site_settings():
-    """DEPRECEATED."""
+def populate_routes(site):
+    """Initialize Routes."""
 
-    sites = Site.query.all()
-    for site in sites:
-        fixture_data = [
-            ('Title', 'Anavah {}'.format(site.id)),
-            ('Theme', bootstrap_template()),
-            ('Hash', site.id_hash)
-        ]
-        for fixture_group in fixture_data:
-            SiteSetting(site_id=site.id, key=fixture_group[0], value=fixture_group[1])
+    routes = []
+    for iteration in display_num:
+        _r = fixtures.blend(Route, path=str(iteration), parent=site.id)
+        routes.append(_r)
+    return routes
 
 
-def build_routes():
-    """DEPRECEATED."""
+def populate_templates(routes):
+    """Initialize Templates."""
 
-    sites = Site.query.all()
-    for site in sites:
-        for i in range(display_num):
-            SiteRoute(parent=site.id, path=str(i))
-
-
-def build_templates():
-    """DEPRECEATED."""
-
-    routes = SiteRoute.query.all()
+    templates = []
+    iteration = 0
     for route in routes:
-        file = '{}.html'.format(route.id)
-        parent = route.id
-        SiteTemplate(file=file, parent=parent)
+        _t = fixtures.blend(Template, file=str(iteration), parent=route.id)
+        templates.append(_t)
+        iteration += 1
+    return templates
 
 
-def build_template_elements():
-    """DEPRECEATED."""
+def populate_elements(templates):
+    """Initialize Elements."""
 
-    templates = SiteTemplate.query.all()
+    elements = []
+    iteration = 0
     for template in templates:
-        for iteration in range(display_num):
-            top_nav = TemplateElement(tag='top_nav', order=iteration + 1, template=template.id)
+        for iteration in display_num:
+            tid = template.id
 
-            container = TemplateElement(tag='container', order=1, template=template.id, parent=top_nav.id)
+            top_nav = fixtures.blend(Element, tag='top_nav', order=iteration, template=tid)
 
-            navbar_header = TemplateElement(tag='navbar_header', order=1, template=template.id, parent=container.id)
-            navbar = TemplateElement(tag='navbar', order=2, template=template.id, parent=container.id)
-            navbar_footer = TemplateElement(tag='navbar_footer', order=3, template=template.id, parent=container.id)
+            container = fixtures.blend(Element, tag='container', order=1, template=tid, parent=top_nav.id)
 
-            nav = TemplateElement(tag='nav', order=1, template=template.id, parent=navbar.id)
-            nav_right = TemplateElement(tag='nav_right', order=2, template=template.id, parent=navbar.id)
+            navbar_header = fixtures.blend(Element, tag='navbar_header', order=1, template=tid, parent=top_nav.id)
+            navbar = fixtures.blend(Element, tag='navbar', order=2, template=tid, parent=top_nav.id)
+            navbar_footer = fixtures.blend(Element, tag='navbar_footer', order=3, template=tid, parent=top_nav.id)
+
+            nav = fixtures.blend(Element, tag='nav', order=1, template=tid, parent=navbar.id)
+            nav_right = fixtures.blend(Element, tag='nav_right', order=2, template=tid, parent=navbar.id)

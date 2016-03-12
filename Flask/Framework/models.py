@@ -43,37 +43,6 @@ class Site(db.Model):
             site_title=self.setting_value('Title')
         )
 
-    def __init__(self):
-        """TODO."""
-
-        db.session.add(self)
-        db.session.commit()
-
-
-class Route(db.Model):
-    """TODO."""
-
-    __tablename__ = 'routes'
-
-    id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(255), nullable=False)
-    parent = db.Column(db.Integer, nullable=False)
-
-    @property
-    def child(self):
-        """TODO."""
-
-        return Template.query.filter_by(parent=self.id).first()
-
-    def __init__(self, path, parent):
-        """TODO."""
-
-        self.path = path
-        self.parent = parent
-
-        db.session.add(self)
-        db.session.commit()
-
 
 class Setting(db.Model):
     """TODO."""
@@ -91,15 +60,21 @@ class Setting(db.Model):
 
         return self.key
 
-    def __init__(self, site_id, key, value):
+
+class Route(db.Model):
+    """TODO."""
+
+    __tablename__ = 'routes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(255), nullable=False)
+    parent = db.Column(db.Integer, nullable=False)
+
+    @property
+    def child(self):
         """TODO."""
 
-        self.site_id = site_id
-        self.key = key
-        self.value = value
-
-        db.session.add(self)
-        db.session.commit()
+        return Template.query.filter_by(parent=self.id).first()
 
 
 class Template(db.Model):
@@ -176,15 +151,6 @@ class Template(db.Model):
 
         return Route.query.get(self.parent)
 
-    def __init__(self, file, parent):
-        """TODO."""
-
-        self.file = file
-        self.parent = parent
-
-        db.session.add(self)
-        db.session.commit()
-
 
 class Element(db.Model):
     """TODO."""
@@ -213,19 +179,6 @@ class Element(db.Model):
             d[attribute.key] = attribute.value
         return d
 
-    def __init__(self, template, tag, order, parent=None):
-        """TODO."""
-
-        self.template = template
-        self.tag = tag
-        self.order = order
-
-        if parent:
-            self.parent = parent
-
-        db.session.add(self)
-        db.session.commit()
-
 
 class Attribute(db.Model):
     """TODO."""
@@ -236,16 +189,6 @@ class Attribute(db.Model):
     key = db.Column(db.String(255), nullable=False)
     value = db.Column(db.String(255), nullable=False)
     parent = db.Column(db.Integer, nullable=False)
-
-    def __init__(self, key, value, parent):
-        """TODO."""
-
-        self.key = key
-        self.value = value
-        self.parent = parent
-
-        db.session.add(self)
-        db.session.commit()
 
 
 '''

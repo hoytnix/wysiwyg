@@ -2,12 +2,11 @@
 
 from flask import Flask
 
-from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
 from .blueprint import blueprints
 from .config import Config
-from .extensions import db
+from .extensions import admin, db, fixtures
 
 from .utils.fs import abs_fs
 from .utils.imports import all_models
@@ -49,7 +48,11 @@ def configure_extensions(app):
     with app.app_context():
         db.init_app(app)
 
+    # mixture
+    with app.app_context():
+        fixtures.init_app(app)
+
     # flask_admin
-    admin = Admin(app, url='/admin', name='Anavah', template_mode='bootstrap3')
+    _admin = admin(app, url='/admin', name='Anavah', template_mode='bootstrap3')
     for model in all_models():
-        admin.add_view(ModelView(model, db.session))
+        _admin.add_view(ModelView(model, db.session))
