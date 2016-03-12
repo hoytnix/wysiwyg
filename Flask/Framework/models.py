@@ -98,9 +98,9 @@ class Template(db.Model):
         level = 0
 
         # 'Rows': Highest-level in order-heirarchy, where parent = None
-        rows = TemplateElement.query. \
+        rows = Element.query. \
             filter_by(template=self.id, parent=None). \
-            order_by(TemplateElement.order).all()
+            order_by(Element.order).all()
         row_n = 0
         for row in rows:
             row_n += 1
