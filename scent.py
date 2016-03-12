@@ -13,7 +13,7 @@ else:
     notify = Notifier.notify
 
 
-watch_paths = ["Flask", "tests"]
+watch_paths = ["framework", "tests"]
 
 
 @select_runnable('python')

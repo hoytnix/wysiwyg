@@ -2,7 +2,8 @@
 
 from flask import Blueprint, render_template
 
-from .models import Site, Setting, Route, Template, Element, Attribute
+from . import models
+from .models import Site, Setting, Route, Template, Element
 from .utils.fs import abs_fs
 
 

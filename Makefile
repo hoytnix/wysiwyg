@@ -1,6 +1,6 @@
 # Project settings
-PROJECT := Anavah
-PACKAGE := Flask
+PROJECT := anavah
+PACKAGE := framework
 SOURCES := Makefile setup.py $(shell find $(PACKAGE) -name '*.py')
 
 # Python settings
@@ -91,7 +91,7 @@ $(ALL_FLAG): $(SOURCES)
 ifdef TRAVIS
 ci: check test tests
 else
-ci: doc check test tests
+ci: check test tests #doc
 endif
 
 .PHONY: watch
@@ -193,7 +193,7 @@ site/index.html: mkdocs.yml docs/*.md
 # Static Analysis ##############################################################
 
 .PHONY: check
-check: pep8 pep257 pylint
+check: pep8 pep257 #pylint
 
 .PHONY: pep8
 pep8: depends-ci

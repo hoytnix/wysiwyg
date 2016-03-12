@@ -1,12 +1,12 @@
 """The (M)odel in (M)VC."""
 
 from flask import current_app
-
-from .extensions import db
-
 from random import choice
 import copy
 import pprint
+
+from . import extensions
+from .extensions import db
 
 
 class Site(db.Model):
@@ -189,18 +189,3 @@ class Attribute(db.Model):
     key = db.Column(db.String(255), nullable=False)
     value = db.Column(db.String(255), nullable=False)
     parent = db.Column(db.Integer, nullable=False)
-
-
-'''
-    Randomized data models.
-'''
-
-
-def bootstrap_template():
-    """TODO."""
-
-    return choice([
-        'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal', 'lumen',
-        'paper', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab',
-        'superhero', 'united', 'yeti'
-    ])

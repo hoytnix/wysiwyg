@@ -1,1 +1,1 @@
-"""Integration tests for the `Flask` package."""
+"""Integration tests for the `framework` package."""

@@ -7,10 +7,10 @@ import click
 
 from flask import current_app
 
-from Framework.app import create_app
-from Framework.extensions import db
-from Framework.utils.imports import all_models
-from Framework.utils.populate import populate_all
+from framework.app import create_app
+from framework.extensions import db
+from framework.utils.imports import all_models
+from framework.utils.populate import populate_all
 
 
 @click.group()

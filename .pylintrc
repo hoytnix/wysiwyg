@@ -2,6 +2,10 @@
 
 disable=locally-disabled,fixme,too-few-public-methods,too-many-public-methods,invalid-name,global-statement,too-many-ancestors
 
+[MASTER]
+
+ignored-modules=Flask_SQLAlchemy
+
 [FORMAT]
 
 max-line-length=80

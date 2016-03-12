@@ -1,3 +1,3 @@
 """Integration tests configuration file."""
 
-from Flask.test.conftest import pytest_configure  # pylint: disable=unused-import
+from framework.test.conftest import pytest_configure  # pylint: disable=unused-import

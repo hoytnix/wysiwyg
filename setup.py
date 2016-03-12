@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-"""Setup script for Anavah."""
+"""Setup script for anavah."""
 
 import setuptools
 
-from Flask import __project__, __version__
+from framework import __project__, __version__
 
 try:
     README = open("README.rst").read()
@@ -18,7 +18,7 @@ setuptools.setup(
     name=__project__,
     version=__version__,
 
-    description="I heard you like apps, so I made you an app for your apps!",
+    description="I heard you like apps, so I made you an app to make your apps!",
     url='https://github.com/pr0xmeh/anavah',
     author='Michael Hoyt',
     author_email='mike@anavah.co',

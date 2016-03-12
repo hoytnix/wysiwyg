@@ -5,9 +5,9 @@ TODO:
 +   Keep old data; quit dropping *everything*.
 """
 
+from .. import extensions, models
 from ..extensions import fixtures
 from ..models import Site, Setting, Route, Template, Element, Attribute
-from ..models import bootstrap_template
 from .imports import all_models
 
 '''
@@ -27,6 +27,7 @@ def populate_all():
         routes = populate_routes(site)
         templates = populate_templates(routes)
         elements = populate_elements(templates)
+
 
 def populate_settings(site):
     """Initialize Settings."""

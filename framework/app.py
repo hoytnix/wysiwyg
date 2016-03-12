@@ -4,6 +4,7 @@ from flask import Flask
 
 from flask_admin.contrib.sqla import ModelView
 
+from . import blueprint, config, extensions
 from .blueprint import blueprints
 from .config import Config
 from .extensions import admin, db, fixtures
@@ -18,13 +19,11 @@ def create_app():
     http://flask.pocoo.org/docs/0.10/patterns/appfactories/
     """
 
-    config = Config()
-
     # Initialize the app object.
     app = Flask(import_name=__name__, template_folder=abs_fs['templates'])
 
     # Attempt to configure from python-object.
-    app.config.from_object(config)
+    app.config.from_object(config.Config())
 
     configure_blueprints(app)
     configure_extensions(app)
@@ -38,7 +37,7 @@ def configure_blueprints(app):
     TODO: Iterate through an index.
     """
 
-    app.register_blueprint(blueprints, url_prefix='')
+    app.register_blueprint(blueprint.blueprints, url_prefix='')
 
 
 def configure_extensions(app):

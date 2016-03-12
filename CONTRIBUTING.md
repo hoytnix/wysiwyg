@@ -8,7 +8,6 @@
     * Windows: http://cygwin.com/install.html
     * Mac: https://developer.apple.com/xcode
     * Linux: http://www.gnu.org/software/make (likely already installed)
-* virtualenv: https://pypi.python.org/pypi/virtualenv#installation
 * Pandoc: http://johnmacfarlane.net/pandoc/installing.html
 * Graphviz: http://www.graphviz.org/Download.php
 

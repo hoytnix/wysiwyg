@@ -3,10 +3,10 @@
 
 import unittest
 
-from Flask import sample
+from framework import sample
 
 
-class TestFlask(unittest.TestCase):
+class TestFramework(unittest.TestCase):
 
     """Sample integration test class."""
 

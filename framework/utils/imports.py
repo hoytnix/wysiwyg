@@ -12,7 +12,7 @@ def all_models():
     """
 
     models = []
-    foo = __import__('Framework.models').models
+    foo = __import__('framework').models
     for name, obj in inspect.getmembers(foo):
         if inspect.isclass(obj):
             models.append(obj)
