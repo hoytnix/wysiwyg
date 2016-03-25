@@ -15,7 +15,7 @@ from .imports import all_models
     build:    provides structures
 '''
 
-display_num = range(1)  # Unresponsive > 3
+display_num = range(2)  # Unresponsive > 3
 
 
 def populate_all():

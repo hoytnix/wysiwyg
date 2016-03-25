@@ -5,8 +5,6 @@ Having a task-queue and self-healing architecture should depreceate this.
 
 import click
 
-from flask import current_app
-
 from framework.app import create_app
 from framework.extensions import db
 from framework.utils.imports import all_models

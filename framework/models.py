@@ -90,12 +90,7 @@ class Template(db.Model):
     def element_dict(self):
         """TODO."""
 
-        store = {}
-        d = {
-            'self': None,
-            'children': {}
-        }
-        level = 0
+        store = []
 
         # 'Rows': Highest-level in order-heirarchy, where parent = None
         rows = Element.query. \
@@ -103,44 +98,66 @@ class Template(db.Model):
             order_by(Element.order).all()
         row_n = 0
         for row in rows:
+            store.append( (row_n, row, []) )
             row_n += 1
-            row_key = 'row_{}'.format(row_n)
 
-            row_s = copy.deepcopy(d)
-            row_s['self'] = row
+        # Create a level queue.
+        queue = {}
+        row_keys = [x[0] for x in store]
+        for row_key in row_keys:
+            # 1. Populate highest-level with the row itself.
+            queue[row_key] = {}
+            queue[row_key]['0'] = []
+            for k in store:
+                if k[0] == row_key:
+                    queue[row_key]['0'].append(k[1])
 
-            store[row_key] = row_s
+            # 2. Recursively add children to next level.
+            new_level = 1
+            while True:
+                do_continue = False
+                first = True
+                for parent in queue[row_key][str(new_level - 1)]:
+                    children = parent.children
+                    if children.__len__() > 0:
+                        do_continue = True
+                        if first:
+                            queue[row_key][str(new_level)] = []
+                            first = False
+                        for child in children:
+                            queue[row_key][str(new_level)].append(child)
+                if not do_continue: # None have children
+                    break
+                else:
+                    new_level += 1
 
-        # After that, elements may have an infinite nesting of children.
-        pointer = store
-        while True:
-            keys = [key for key in pointer.keys()]
+        '''
+        1) Add top-level (0).
+        2) Recursive:
+            a) for element in row:
+            b)   for _element in row+1:
+            c)     if _element in element.children:
+            d)       win.
+        '''
 
-            for key in keys:
-                return None
-            children = row['self'].children
-            if children:
-                for child in children:
-                    k = str(child.order)
-                    row['children'][k] = copy.deepcopy(d)
-            else:
-                break
-            break
-            '''
-                # 2. Add it to the latest heirarchy level...
-                element = row['todo'][0]
-                k = str(element.order)
-                row['children'][k] = copy.deepcopy(d)
-                row['children'][k]['self'] = copy.deepcopy(element)
-                # 3. Move the item from todo to done.
-                row['todo'].remove(element)
-                # . Populate new queue.
-                row['children'][k]['todo'] = element.children
-                #
-                #row = row['children']
-            # 4. If empty queue, check for a new level.
-            '''
-        store[row_key] = row
+        #pprint.pprint(queue, indent=4, width=80)
+        #return None
+
+        row_keys = [x[0] for x in store]
+        for row in row_keys:
+            level = 0
+            while True:
+                curr_key = str(level)
+                next_key = str(level + 1)
+
+                if next_key not in queue[row]:
+                    break # No more levels!
+
+                for e in queue[row][curr_key]:
+                    for _e in queue[row][next_key]:
+                        if _e in e.children:
+                            print(new_level, _e.order, e.tag, _e.tag)
+                level += 1
 
         # Verbosity, thank you.
         pprint.pprint(store, indent=4, width=120)
