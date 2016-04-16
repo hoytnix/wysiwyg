@@ -55,21 +55,13 @@ ifndef TRAVIS
 	BIN_ := $(BIN)/
 endif
 PYTHON := $(BIN_)python
-PIP := $(BIN_)pip
+PIP := $(BIN_)pip -q
 EASY_INSTALL := $(BIN_)easy_install
-RST2HTML := $(PYTHON) $(BIN_)rst2html.py
-PDOC := $(PYTHON) $(BIN_)pdoc
-MKDOCS := $(BIN_)mkdocs
 PEP8 := $(BIN_)pep8
-PEP8RADIUS := $(BIN_)pep8radius
 PEP257 := $(BIN_)pep257
 PYLINT := $(BIN_)pylint
-PYREVERSE := $(BIN_)pyreverse
-NOSE := $(BIN_)nosetests
 PYTEST := $(BIN_)py.test
 COVERAGE := $(BIN_)coverage
-SNIFFER := $(BIN_)sniffer
-HONCHO := $(ACTIVATE) && honcho
 
 # Flags for PHONY targets
 INSTALLED_FLAG := $(ENV)/.installed
@@ -82,7 +74,7 @@ ALL_FLAG := $(ENV)/.all
 # Main Targets #################################################################
 
 .PHONY: all
-all: depends doc $(ALL_FLAG)
+all: depends
 $(ALL_FLAG): $(SOURCES)
 	$(MAKE) check
 	touch $(ALL_FLAG)  # flag to indicate all setup steps were successful
@@ -93,11 +85,6 @@ ci: check test tests
 else
 ci: check test tests #doc
 endif
-
-.PHONY: watch
-watch: depends .clean-test
-	@ rm -rf $(FAILED_FLAG)
-	$(SNIFFER)
 
 # Development Installation #####################################################
 
@@ -114,7 +101,7 @@ $(PIP):
 # Tools Installation ###########################################################
 
 .PHONY: depends
-depends: depends-ci depends-doc depends-dev
+depends: depends-ci depends-dev
 
 .PHONY: depends-ci
 depends-ci: env Makefile $(DEPENDS_CI_FLAG)
@@ -122,73 +109,11 @@ $(DEPENDS_CI_FLAG): Makefile
 	$(PIP) install --upgrade pep8 pep257 pylint coverage pytest pytest-describe pytest-expecter pytest-cov pytest-random pytest-runfailed
 	@ touch $(DEPENDS_CI_FLAG)  # flag to indicate dependencies are installed
 
-.PHONY: depends-doc
-depends-doc: env Makefile $(DEPENDS_DOC_FLAG)
-$(DEPENDS_DOC_FLAG): Makefile
-	$(PIP) install --upgrade pylint docutils readme pdoc mkdocs pygments
-	@ touch $(DEPENDS_DOC_FLAG)  # flag to indicate dependencies are installed
-
 .PHONY: depends-dev
 depends-dev: env Makefile $(DEPENDS_DEV_FLAG)
 $(DEPENDS_DEV_FLAG): Makefile
-	$(PIP) install --upgrade pip pep8radius wheel sniffer
-ifdef WINDOWS
-	$(PIP) install --upgrade pywin32
-else ifdef MAC
-	$(PIP) install --upgrade pync MacFSEvents==0.4
-else ifdef LINUX
-	$(PIP) install --upgrade pyinotify
-endif
+	$(PIP) install --upgrade pip pep8radius wheel pyinotify
 	@ touch $(DEPENDS_DEV_FLAG)  # flag to indicate dependencies are installed
-
-# Documentation ################################################################
-
-.PHONY: doc
-doc: readme verify-readme uml apidocs mkdocs
-
-.PHONY: doc-live
-doc-live: doc
-	eval "sleep 3; open http://127.0.0.1:8000" &
-	$(MKDOCS) serve
-
-.PHONY: read
-read: doc
-	$(OPEN) site/index.html
-	$(OPEN) apidocs/$(PACKAGE)/index.html
-	$(OPEN) README-pypi.html
-	$(OPEN) README-github.html
-
-.PHONY: readme
-readme: depends-doc README-github.html README-pypi.html
-README-github.html: README.md
-	pandoc -f markdown_github -t html -o README-github.html README.md
-README-pypi.html: README.rst
-	$(RST2HTML) README.rst README-pypi.html
-%.rst: %.md
-	pandoc -f markdown_github -t rst -o $@ $<
-
-.PHONY: verify-readme
-verify-readme: $(DOCS_FLAG)
-$(DOCS_FLAG): README.rst CHANGES.rst
-	$(PYTHON) setup.py check --restructuredtext --strict --metadata
-	@ touch $(DOCS_FLAG)  # flag to indicate README has been checked
-
-.PHONY: uml
-uml: depends-doc docs/*.png
-docs/*.png: $(SOURCES)
-	$(PYREVERSE) $(PACKAGE) -p $(PACKAGE) -a 1 -f ALL -o png --ignore test
-	- mv -f classes_$(PACKAGE).png docs/classes.png
-	- mv -f packages_$(PACKAGE).png docs/packages.png
-
-.PHONY: apidocs
-apidocs: depends-doc apidocs/$(PACKAGE)/index.html
-apidocs/$(PACKAGE)/index.html: $(SOURCES)
-	$(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
-
-.PHONY: mkdocs
-mkdocs: depends-doc site/index.html
-site/index.html: mkdocs.yml docs/*.md
-	$(MKDOCS) build --clean --strict
 
 # Static Analysis ##############################################################
 
@@ -258,11 +183,8 @@ read-coverage:
 # Cleanup ######################################################################
 
 .PHONY: clean
-clean: .clean-dist .clean-test .clean-doc .clean-build
+clean: .clean-test .clean-env .clean-build
 	rm -rf $(ALL_FLAG)
-
-.PHONY: clean-all
-clean-all: clean .clean-env .clean-workspace
 
 .PHONY: .clean-build
 .clean-build:
@@ -270,25 +192,13 @@ clean-all: clean .clean-env .clean-workspace
 	find $(PACKAGE) tests -name '__pycache__' -delete
 	rm -rf $(INSTALLED_FLAG) *.egg-info
 
-.PHONY: .clean-doc
-.clean-doc:
-	rm -rf README.rst apidocs *.html docs/*.png
-
 .PHONY: .clean-test
 .clean-test:
 	rm -rf .pytest .coverage htmlcov
 
-.PHONY: .clean-dist
-.clean-dist:
-	rm -rf dist build
-
 .PHONY: .clean-env
 .clean-env: clean
 	rm -rf $(ENV)
-
-.PHONY: .clean-workspace
-.clean-workspace:
-	rm -rf *.sublime-workspace
 
 # System Installation ##########################################################
 
@@ -299,7 +209,3 @@ develop:
 .PHONY: install
 install:
 	$(SYS_PYTHON) setup.py install
-
-.PHONY: download
-download:
-	$(SYS_PYTHON) -m pip install $(PROJECT)

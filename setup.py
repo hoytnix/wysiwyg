@@ -7,8 +7,8 @@ import setuptools
 from framework import __project__, __version__
 
 try:
-    README = open("README.rst").read()
-    CHANGES = open("CHANGES.rst").read()
+    README = open("readme.md").read()
+    CHANGES = open("changes.md").read()
 except IOError:
     DESCRIPTION = "<placeholder>"
 else:
@@ -28,18 +28,14 @@ setuptools.setup(
     entry_points={'console_scripts': []},
 
     long_description=(DESCRIPTION),
-    license='MIT',
     classifiers=[
         # TODO: update this list to match your application: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 1 - Planning',
         'Natural Language :: English',
-        'Operating System :: OS Independent',
+        'Environment :: Amazon Web Services',
+        'Framework :: Flask',
+        'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
 

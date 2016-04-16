@@ -98,7 +98,7 @@ class Template(db.Model):
             order_by(Element.order).all()
         row_n = 0
         for row in rows:
-            store.append( (row_n, row, []) )
+            store.append((row_n, row, []))
             row_n += 1
 
         # Create a level queue.
@@ -126,7 +126,7 @@ class Template(db.Model):
                             first = False
                         for child in children:
                             queue[row_key][str(new_level)].append(child)
-                if not do_continue: # None have children
+                if not do_continue:  # None have children
                     break
                 else:
                     new_level += 1
@@ -140,8 +140,8 @@ class Template(db.Model):
             d)       win.
         '''
 
-        #pprint.pprint(queue, indent=4, width=80)
-        #return None
+        # pprint.pprint(queue, indent=4, width=80)
+        # return None
 
         row_keys = [x[0] for x in store]
         for row in row_keys:
@@ -151,7 +151,7 @@ class Template(db.Model):
                 next_key = str(level + 1)
 
                 if next_key not in queue[row]:
-                    break # No more levels!
+                    break  # No more levels!
 
                 for e in queue[row][curr_key]:
                     for _e in queue[row][next_key]:
