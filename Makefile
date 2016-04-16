@@ -81,9 +81,9 @@ $(ALL_FLAG): $(SOURCES)
 
 .PHONY: ci
 ifdef TRAVIS
-ci: check test tests
+ci: check #test tests
 else
-ci: check test tests #doc
+ci: check clean #test tests #doc
 endif
 
 # Development Installation #####################################################
