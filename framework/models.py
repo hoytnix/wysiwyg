@@ -3,10 +3,10 @@
 from flask import current_app
 from random import choice
 import copy
-import pprint
 
 from . import extensions
 from .extensions import db
+from .utils.helpers import debug_print
 
 
 class Site(db.Model):
@@ -158,28 +158,103 @@ class Template(db.Model):
         NOTE: \-\ = self
         '''
 
-        # pprint.pprint(queue, indent=4, width=80)
-        # return None
+        # Debug verbosity.
+        debug_print(title = 'QUEUE', data = queue)
 
-        returnable = {}
+
+        e_dict = {}
         row_keys = [x[0] for x in store]
+
         for row in row_keys:
-            level = 0
-            while True:
-                curr_key = str(level)
-                next_key = str(level + 1)
+            # First
+            e_dict[row] = {}
 
-                if next_key not in queue[row]:
-                    break  # No more levels!
+            # Convenience pointers
+            r_cur = e_dict[row]
+            q_cur = queue[row]
 
-                for e in queue[row][curr_key]:
-                    for _e in queue[row][next_key]:
-                        if _e in e.children:
-                            print(new_level, _e.order, e.tag, _e.tag)
-                level += 1
+            # Populate first for operation.
+            for e_cur in q_cur["0"]:
+                r_cur[e_cur.order] = [e_cur, None]
+
+
+            # Loop for each top-level element.
+            te_keys = [x for x in r_cur]
+
+            for te_key in te_keys:
+                # Top-element pointer
+                te_cur = r_cur[te_key]
+
+                # Tree-level counter
+                level = 1
+
+                steps = 1
+                # Tree traversal
+                grandparent_pointer = [None]
+                parent_pointer = [te_cur]
+                while True:  # Is not none
+                    parent = parent_pointer[0]
+
+                    curr_key = str(level)
+                    prev_key = str(level - 1)
+
+                    # Sanity check.
+                    if curr_key not in q_cur:
+                        print('No more depth!')
+                        break  # No more depth!
+                        # Actualy, this should reset the level to the top.
+
+                    # Queue-level pointers.
+                    child_queue = q_cur[curr_key]
+                    parent_queue = q_cur[prev_key]
+
+                    # Relationship comparison
+                    flag = None
+                    for child in child_queue:
+                        if child in parent[0].children:
+                            # First, add it.
+                            if not type(parent[1]) is dict:
+                                parent[1] = {}
+                            parent[1][child.order] = [child, None]
+                            child_pointer = parent[1][child.order]
+                            # Then, change the pointer.
+                            level += 1
+                            if str(level) not in q_cur:  # no more depth
+                                child_queue.remove(child)
+                                level -= 1
+                            else:  # continue to next level
+                                grandparent_pointer = [parent]
+                                parent_pointer = [child_pointer]
+                            # First-child only.
+                            flag = True
+                            break
+                    if not flag:  # Has no children 
+                        # First, remove it.
+                        try:
+                            parent_queue.remove(parent[0])
+                        except:
+                            print('Phooey')
+                        debug_print(title='New Queue {}'.format(steps), data=q_cur)
+
+                        # Then, change the pointer.
+                        level -= 1
+                        parent_pointer = [grandparent_pointer[0]]
+                        grandparent_pointer = [None]
+                        #print(level)
+
+                    if flag:
+                        print('Next level.')
+                    else:
+                        print('Previous level.')
+                    print(level, grandparent_pointer, parent_pointer)
+
+                    # Safety
+                    if steps == 10:
+                        break
+                    steps += 1
 
         # Verbosity, thank you.
-        pprint.pprint(returnable, indent=4, width=120)
+        debug_print(title='Elemenet Dictionary', data=e_dict)
 
     @property
     def owner(self):

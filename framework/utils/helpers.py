@@ -3,6 +3,8 @@
 import re
 import hashlib
 
+from pprint import pprint
+
 import unidecode
 
 
@@ -43,3 +45,15 @@ def html_tags(content, tag, attributes=None):
         content=content,
         attr=attr_str
     )
+
+
+def debug_print(title, data, extremity=10, char='='):
+    # Title-seperator
+    sep_s = char * extremity
+    title_s = '{} {} {}'.format(sep_s, title, sep_s)
+
+    # Print.
+    print('\n' + title_s)
+    pprint(data, indent=4, width=80)
+    print(title_s + '\n')
+
