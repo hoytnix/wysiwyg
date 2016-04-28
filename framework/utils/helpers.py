@@ -48,6 +48,11 @@ def html_tags(content, tag, attributes=None):
 
 
 def debug_print(title, data, extremity=10, char='='):
+    """Print helpful debug messages.
+
+    Used for debugging element_dict originally, but may be evolved later.
+    """
+
     # Title-seperator
     sep_s = char * extremity
     title_s = '{} {} {}'.format(sep_s, title, sep_s)
@@ -56,4 +61,3 @@ def debug_print(title, data, extremity=10, char='='):
     print('\n' + title_s)
     pprint(data, indent=4, width=80)
     print(title_s + '\n')
-

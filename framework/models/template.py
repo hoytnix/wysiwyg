@@ -87,8 +87,7 @@ class Template(db.Model):
         '''
 
         # Debug verbosity.
-        debug_print(title = 'QUEUE', data = queue)
-
+        debug_print(title='QUEUE', data=queue)
 
         e_dict = {}
         row_keys = [x[0] for x in store]
@@ -156,7 +155,7 @@ class Template(db.Model):
                             # First-child only.
                             flag = True
                             break
-                    if not flag:  # Has no children 
+                    if not flag:  # Has no children
                         # First, remove it.
                         parent_queue.remove(parent[0])
                         debug_print(title='New Queue {}'.format(steps), data=q_cur)
@@ -165,7 +164,7 @@ class Template(db.Model):
                         level -= 1
                         parent_pointer = [grandparent_pointer[0]]
                         grandparent_pointer = [None]
-                        #print(level)
+                        # print(level)
 
                     if flag:
                         print('Next level.')
@@ -178,7 +177,6 @@ class Template(db.Model):
 
                     if grandparent_pointer[0] is None and parent_pointer[0] is None:
                         break
-
 
                     steps += 1
 
