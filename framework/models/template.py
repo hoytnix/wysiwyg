@@ -1,80 +1,8 @@
-"""The (M)odel in (M)VC."""
+"""High-level template logic."""
 
-from flask import current_app
-from random import choice
-import copy
-
-from . import extensions
-from .extensions import db
-from .utils.helpers import debug_print
-
-
-class Site(db.Model):
-    """TODO."""
-
-    __tablename__ = 'sites'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    def settings_as_dict(self):
-        """TODO."""
-
-        query = Setting.query.filter_by(site_id=self.id).all()
-        struct = {}
-        for setting in query:
-            struct[setting.key] = setting.value
-        return struct
-
-    def setting_value(self, key):
-        """TODO."""
-
-        return Setting.query. \
-            filter_by(site_id=self.id). \
-            filter_by(key=key). \
-            first(). \
-            value
-
-    @property
-    def href(self):
-        """TODO."""
-
-        return '<a href="/{site_id}">{site_title}</a>'.format(
-            site_id=self.id,
-            site_title=self.setting_value('Title')
-        )
-
-
-class Setting(db.Model):
-    """TODO."""
-
-    __tablename__ = 'settings'
-
-    id = db.Column(db.Integer, primary_key=True)
-    site_id = db.Column(db.Integer, nullable=False)
-    key = db.Column(db.String(255), nullable=False)
-    value = db.Column(db.String(255), nullable=False)
-
-    @property
-    def name(self):
-        """TODO."""
-
-        return self.key
-
-
-class Route(db.Model):
-    """TODO."""
-
-    __tablename__ = 'routes'
-
-    id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(255), nullable=False)
-    parent = db.Column(db.Integer, nullable=False)
-
-    @property
-    def child(self):
-        """TODO."""
-
-        return Template.query.filter_by(parent=self.id).first()
+from ..extensions import db
+from ..utils.helpers import debug_print
+from .element import Element
 
 
 class Template(db.Model):
@@ -175,8 +103,8 @@ class Template(db.Model):
 
             # Populate first for operation.
             for e_cur in q_cur["0"]:
+                print(e_cur.tag, e_cur.order)
                 r_cur[e_cur.order] = [e_cur, None]
-
 
             # Loop for each top-level element.
             te_keys = [x for x in r_cur]
@@ -230,10 +158,7 @@ class Template(db.Model):
                             break
                     if not flag:  # Has no children 
                         # First, remove it.
-                        try:
-                            parent_queue.remove(parent[0])
-                        except:
-                            print('Phooey')
+                        parent_queue.remove(parent[0])
                         debug_print(title='New Queue {}'.format(steps), data=q_cur)
 
                         # Then, change the pointer.
@@ -248,9 +173,13 @@ class Template(db.Model):
                         print('Previous level.')
                     print(level, grandparent_pointer, parent_pointer)
 
-                    # Safety
-                    if steps == 10:
+                    # This should be the breaking point.
+                    # TODO: Test this.
+
+                    if grandparent_pointer[0] is None and parent_pointer[0] is None:
                         break
+
+
                     steps += 1
 
         # Verbosity, thank you.
@@ -261,42 +190,3 @@ class Template(db.Model):
         """TODO."""
 
         return Route.query.get(self.parent)
-
-
-class Element(db.Model):
-    """TODO."""
-
-    __tablename__ = 'elements'
-
-    id = db.Column(db.Integer, primary_key=True)
-    tag = db.Column(db.String(255), nullable=False)
-    order = db.Column(db.Integer, nullable=False)
-    template = db.Column(db.Integer, nullable=False)
-    parent = db.Column(db.Integer, nullable=True)
-
-    @property
-    def children(self):
-        """TODO."""
-
-        return Element.query.filter_by(parent=self.id).all()
-
-    @property
-    def attribute_dict(self):
-        """TODO."""
-
-        d = {}
-        attributes = Attribute.query.filter_by(parent=self.id).all()
-        for attribute in attributes:
-            d[attribute.key] = attribute.value
-        return d
-
-
-class Attribute(db.Model):
-    """TODO."""
-
-    __tablename__ = 'attributes'
-
-    id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String(255), nullable=False)
-    value = db.Column(db.String(255), nullable=False)
-    parent = db.Column(db.Integer, nullable=False)

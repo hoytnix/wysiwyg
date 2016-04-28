@@ -7,15 +7,22 @@ TODO:
 
 from .. import extensions, models
 from ..extensions import fixtures
-from ..models import Site, Setting, Route, Template, Element, Attribute
 from .imports import all_models
+
+from ..models.attribute import Attribute
+from ..models.element import Element
+from ..models.route import Route
+from ..models.setting import Setting
+from ..models.site import Site
+from ..models.template import Template
+
 
 '''
     populate: performs build commands
     build:    provides structures
 '''
 
-display_num = range(1)  # Unresponsive > 3
+display_num = range(2)  # Unresponsive > 3
 
 
 def populate_all():
