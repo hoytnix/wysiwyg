@@ -161,6 +161,7 @@ class Template(db.Model):
         # pprint.pprint(queue, indent=4, width=80)
         # return None
 
+        returnable = {}
         row_keys = [x[0] for x in store]
         for row in row_keys:
             level = 0
@@ -178,7 +179,7 @@ class Template(db.Model):
                 level += 1
 
         # Verbosity, thank you.
-        pprint.pprint(store, indent=4, width=120)
+        pprint.pprint(returnable, indent=4, width=120)
 
     @property
     def owner(self):

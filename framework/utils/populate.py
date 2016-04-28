@@ -76,9 +76,9 @@ def populate_elements(templates):
 
             container = fixtures.blend(Element, tag='container', order=1, template=tid, parent=top_nav.id)
 
-            navbar_header = fixtures.blend(Element, tag='navbar_header', order=1, template=tid, parent=top_nav.id)
-            navbar = fixtures.blend(Element, tag='navbar', order=2, template=tid, parent=top_nav.id)
-            navbar_footer = fixtures.blend(Element, tag='navbar_footer', order=3, template=tid, parent=top_nav.id)
+            navbar_header = fixtures.blend(Element, tag='navbar_header', order=1, template=tid, parent=container.id)
+            navbar = fixtures.blend(Element, tag='navbar', order=2, template=tid, parent=container.id)
+            navbar_footer = fixtures.blend(Element, tag='navbar_footer', order=3, template=tid, parent=container.id)
 
             nav = fixtures.blend(Element, tag='nav', order=1, template=tid, parent=navbar.id)
             nav_right = fixtures.blend(Element, tag='nav_right', order=2, template=tid, parent=navbar.id)
