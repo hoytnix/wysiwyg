@@ -138,6 +138,24 @@ class Template(db.Model):
             b)   for _element in row+1:
             c)     if _element in element.children:
             d)       win.
+
+
+
+        1: (-, (
+            2: (-, {
+                    3: (-, None),
+                    4: (-, {
+                            5: (-, None),
+                            6: (-, None)
+                            },
+                    ),
+                    7: (-, None)
+                    }
+                )
+            )
+        )
+
+        NOTE: \-\ = self
         '''
 
         # pprint.pprint(queue, indent=4, width=80)
