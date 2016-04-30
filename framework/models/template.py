@@ -87,7 +87,7 @@ class Template(db.Model):
         '''
 
         # Debug verbosity.
-        debug_print(title='QUEUE', data=queue)
+        # debug_print(title='QUEUE', data=queue)
 
         e_dict = {}
         row_keys = [x[0] for x in store]
@@ -102,7 +102,7 @@ class Template(db.Model):
 
             # Populate first for operation.
             for e_cur in q_cur["0"]:
-                print(e_cur.tag, e_cur.order)
+                # print(e_cur.tag, e_cur.order)
                 r_cur[e_cur.order] = [e_cur, None]
 
             # Loop for each top-level element.
@@ -127,7 +127,7 @@ class Template(db.Model):
 
                     # Sanity check.
                     if curr_key not in q_cur:
-                        print('No more depth!')
+                        # print('No more depth!')
                         break  # No more depth!
                         # Actualy, this should reset the level to the top.
 
@@ -158,7 +158,7 @@ class Template(db.Model):
                     if not flag:  # Has no children
                         # First, remove it.
                         parent_queue.remove(parent[0])
-                        debug_print(title='New Queue {}'.format(steps), data=q_cur)
+                        # debug_print(title='New Queue {}'.format(steps), data=q_cur)
 
                         # Then, change the pointer.
                         level -= 1
@@ -166,11 +166,11 @@ class Template(db.Model):
                         grandparent_pointer = [None]
                         # print(level)
 
-                    if flag:
-                        print('Next level.')
-                    else:
-                        print('Previous level.')
-                    print(level, grandparent_pointer, parent_pointer)
+                    # if flag:
+                    #     print('Next level.')
+                    # else:
+                    #     print('Previous level.')
+                    # print(level, grandparent_pointer, parent_pointer)
 
                     # This should be the breaking point.
                     # TODO: Test this.
@@ -181,7 +181,7 @@ class Template(db.Model):
                     steps += 1
 
         # Verbosity, thank you.
-        debug_print(title='Elemenet Dictionary', data=e_dict)
+        # debug_print(title='Elemenet Dictionary', data=e_dict)
 
     @property
     def owner(self):
