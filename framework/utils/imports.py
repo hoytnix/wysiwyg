@@ -12,8 +12,12 @@ def all_models():
     """
 
     models = []
-    foo = __import__('framework').models
-    for name, obj in inspect.getmembers(foo):
-        if inspect.isclass(obj):
-            models.append(obj)
+    namespace = __import__('framework').models
+
+    for name, obj in inspect.getmembers(namespace):
+        if inspect.ismodule(obj):
+            for _name, _obj in inspect.getmembers(obj):
+                if inspect.isclass(_obj):
+                    if _obj not in models:
+                        models.append(_obj)
     return models

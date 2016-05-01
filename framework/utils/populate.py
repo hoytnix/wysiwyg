@@ -22,11 +22,16 @@ from ..models.template import Template
     build:    provides structures
 '''
 
-display_num = range(2)  # Unresponsive > 3
+displays = 2
+display_num = range(displays)  # Unresponsive > 3
 
 
 def populate_all():
     """Initalize the async worker."""
+
+    #e()
+
+    #return None
 
     for iteration in display_num:
         site = fixtures.blend(Site)
@@ -73,19 +78,68 @@ def populate_templates(routes):
 def populate_elements(templates):
     """Initialize Elements."""
 
-    elements = []
-    iteration = 0
-    for template in templates:
-        for iteration in display_num:
-            tid = template.id
+    d = {
+        1: [( 1,None,'head'),
+            ( 4,None,'body')
+           ],
+        2: [( 2, 1, 'title'),
+            ( 3, 1, 'meta'),
+            ( 5, 4, 'navbar'),
+            (20, 4, 'content'),
+            (23, 4, 'footer')
+           ],
+        3: [( 6, 5, 'nav_head'),
+            ( 7, 5, 'nav'),
+            (14, 5, 'nav_right'),
+            (21,20, 'h1'),
+            (22,20, 'div'),
+            (24,23, 'ul'),
+            (27,23, 'p')
+           ],
+        4: [( 8, 7, 'brand'),
+            ( 9, 7, 'links'),
+            (13, 7, 'thing'),
+            (15,14, 'a'),
+            (16,14, 'ul'),
+            (19,14, 'a'),
+            (25,24, 'li'),
+            (26,24, 'li')
+           ],
+        5: [(10, 9, 'ul'),
+            (17,16, 'li'),
+            (18,16, 'li')
+           ],
+        6: [(11,10, 'li'),
+            (12,10, 'li')
+           ]
+    }
 
-            top_nav = fixtures.blend(Element, tag='top_nav', order=iteration, template=tid)
+    k = {}
+    for level in d:
+        for o in d[level]:
+            k[o[0]] = None
 
-            container = fixtures.blend(Element, tag='container', order=1, template=tid, parent=top_nav.id)
+    fin_rows = 0
+    fin_templates = 0
+    while True:
+        tid = templates[fin_templates].id
 
-            navbar_header = fixtures.blend(Element, tag='navbar_header', order=1, template=tid, parent=container.id)
-            navbar = fixtures.blend(Element, tag='navbar', order=2, template=tid, parent=container.id)
-            navbar_footer = fixtures.blend(Element, tag='navbar_footer', order=3, template=tid, parent=container.id)
+        for level in d:
+            elements = d[level]
+            order = 1
 
-            nav = fixtures.blend(Element, tag='nav', order=1, template=tid, parent=navbar.id)
-            nav_right = fixtures.blend(Element, tag='nav_right', order=2, template=tid, parent=navbar.id)
+            for element in elements:
+                if level == 1: # top-row
+                    e = fixtures.blend(Element, tag=element[2], order=fin_templates, template=tid)
+                else:
+                    e = fixtures.blend(Element, tag=element[2], order=order, template=tid, parent=k[element[1]].id)
+                k[element[0]] = e
+                order += 1
+
+        # Break
+        fin_rows += 1
+        if fin_rows == displays:
+            fin_templates += 1
+            fin_rows = 0
+        if fin_templates == templates.__len__():
+            break

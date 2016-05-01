@@ -46,9 +46,9 @@ def resetdb(fix):
 def test():
     """Execute a function only reachable within the project namespace."""
 
-    from Framework.utils.fs import abs_fs
+    from framework.utils.imports import all_models
 
-    print(abs_fs)
+    print(all_models())
 
 
 if __name__ == '__main__':

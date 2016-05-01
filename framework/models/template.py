@@ -14,6 +14,7 @@ class Template(db.Model):
     file = db.Column(db.String(255), nullable=False)
     parent = db.Column(db.Integer, nullable=False)
 
+
     @property
     def element_dict(self):
         """TODO."""
@@ -182,6 +183,9 @@ class Template(db.Model):
 
         # Verbosity, thank you.
         # debug_print(title='Elemenet Dictionary', data=e_dict)
+
+        return e_dict
+
 
     @property
     def owner(self):
