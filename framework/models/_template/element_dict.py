@@ -17,7 +17,6 @@ class ElementDict:
 
         self.template = template
 
-
     def to_html(self):
         """Convert an element_dict to HTML.
 
@@ -28,7 +27,6 @@ class ElementDict:
 
         pass
 
-
     def to_template(self):
         """Convert HTML to a Template's elements, attributes, etc.
 
@@ -38,7 +36,6 @@ class ElementDict:
         """
 
         pass
-
 
     def element_dict(self):
         """TODO."""
@@ -209,4 +206,3 @@ class ElementDict:
         self.d_print.element_dict(e_dict)
 
         return e_dict
-

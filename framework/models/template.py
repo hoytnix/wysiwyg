@@ -13,14 +13,12 @@ class Template(db.Model):
     file = db.Column(db.String(255), nullable=False)
     parent = db.Column(db.Integer, nullable=False)
 
-
     @property
     def element_dict(self):
         """TODO."""
 
         e = ElementDict(self)
         return e.element_dict()
-
 
     @property
     def owner(self):

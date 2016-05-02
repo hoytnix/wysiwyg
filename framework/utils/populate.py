@@ -29,10 +29,6 @@ display_num = range(displays)  # Unresponsive > 3
 def populate_all():
     """Initalize the async worker."""
 
-    #e()
-
-    #return None
-
     for iteration in display_num:
         site = fixtures.blend(Site)
         populate_settings(site)
@@ -130,7 +126,7 @@ def populate_elements(templates):
             order = 1
 
             for element in elements:
-                if level == 1: # top-row
+                if level == 1:  # top-row
                     e = fixtures.blend(Element, tag=element[2], order=fin_templates, template=tid)
                 else:
                     e = fixtures.blend(Element, tag=element[2], order=order, template=tid, parent=k[element[1]].id)

@@ -30,6 +30,5 @@ class Element(db.Model):
             d[attribute.key] = attribute.value
         return d
 
-
     def __repr__(self):
         return '<{}>'.format(self.tag)
