@@ -5,19 +5,28 @@ import inspect
 
 
 def all_models():
-    """A list of model-class objects.
+    """A list of model-class objects."""
 
-    For some reason `__import__('Framework')` doesn't contain
-    `models` as a member, so it has to be import-ed absolutely as such.
-    """
-
-    models = []
     namespace = __import__('framework').models
 
+    modules = []
     for name, obj in inspect.getmembers(namespace):
         if inspect.ismodule(obj):
-            for _name, _obj in inspect.getmembers(obj):
-                if inspect.isclass(_obj):
-                    if _obj not in models:
-                        models.append(_obj)
+            modules.append(obj)
+
+    classes = []
+    for module in modules:
+        for name, obj in inspect.getmembers(module):
+            if inspect.isclass(obj):
+                classes.append(obj)
+
+    models = []
+    for _class in classes:
+        try:
+            if _class.__tablename__:
+                if _class not in models:  # IDK why there are duplicates.
+                    models.append(_class)
+        except:
+            pass
+
     return models

@@ -44,7 +44,13 @@ def resetdb(fix):
 
 @cli.command('test')
 def test():
-    """Execute a function only reachable within the project namespace."""
+    """Execute a function only reachable within the project namespace.
+
+    TODO: Provide an interface for executing specific functionality.
+
+    * With, or without an app-context.
+    * Optionable suppliable variables.
+    * Namespace to execute."""
 
     from framework.utils.imports import all_models
 

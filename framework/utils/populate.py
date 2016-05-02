@@ -78,6 +78,7 @@ def populate_templates(routes):
 def populate_elements(templates):
     """Initialize Elements."""
 
+    # 26-total items
     d = {
         1: [( 1,None,'head'),
             ( 4,None,'body')

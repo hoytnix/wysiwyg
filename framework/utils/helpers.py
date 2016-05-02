@@ -3,8 +3,6 @@
 import re
 import hashlib
 
-from pprint import pprint
-
 import unidecode
 
 

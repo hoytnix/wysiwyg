@@ -29,3 +29,7 @@ class Element(db.Model):
         for attribute in attributes:
             d[attribute.key] = attribute.value
         return d
+
+
+    def __repr__(self):
+        return '<{}>'.format(self.tag)

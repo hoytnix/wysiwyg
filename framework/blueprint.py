@@ -41,6 +41,6 @@ def route_detail(site_url, path):
     route = Route.query.filter_by(parent=site.id).first()
     template = route.child
 
-    html = template.html_string
+    template.element_dict
 
-    return render_template('route_detail.html', html=html, **settings)
+    return render_template('route_detail.html', **settings)
