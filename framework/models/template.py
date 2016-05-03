@@ -1,7 +1,7 @@
 """High-level template logic."""
 
 from ..extensions import db
-from ._template.element_dict import ElementDict
+from ._template.element_dict import template_to_element_dict
 
 
 class Template(db.Model):
@@ -17,8 +17,7 @@ class Template(db.Model):
     def element_dict(self):
         """TODO."""
 
-        e = ElementDict(self)
-        return e.element_dict()
+        return template_to_element_dict(template=self)
 
     @property
     def owner(self):
