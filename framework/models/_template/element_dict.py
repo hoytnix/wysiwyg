@@ -1,17 +1,10 @@
 """Convert Templates to HTML, and HTML to Templates."""
 
-from .debug import DebugPrint
-
 from ..element import Element
 
+from ...utils.helpers import debug_print
 
 def template_to_element_dict(template):
-    # Debugging:
-    #   This should actually be dependent on the global config.
-    debug = True
-    if debug:
-        d_print = DebugPrint()
-
     store = []
 
     # 'Rows': Highest-level in order-heirarchy, where parent = None
@@ -81,7 +74,7 @@ def template_to_element_dict(template):
     '''
 
     # Debug verbosity.
-    d_print.queue(queue)
+    debug_print(queue, title='INITIAL QUEUE')
 
     e_dict = {}
     row_keys = [x[0] for x in store]
@@ -152,7 +145,7 @@ def template_to_element_dict(template):
                 if not flag:  # Has no children
                     # First, remove it.
                     parent_queue.remove(parent[0])
-                    d_print.queue(q_cur)
+                    debug_print(q_cur, title='QUEUE {}'.format(steps))
 
                     # Then, change the pointer.
                     level -= 1
@@ -175,6 +168,6 @@ def template_to_element_dict(template):
                 steps += 1
 
     # Verbosity, thank you.
-    d_print.element_dict(e_dict)
+    debug_print(e_dict, title='ELEMENT DICT')
 
     return e_dict

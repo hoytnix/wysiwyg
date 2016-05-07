@@ -31,4 +31,6 @@ class Element(db.Model):
         return d
 
     def __repr__(self):
+        """Return a string of the element's tag."""
+
         return '<{}>'.format(self.tag)

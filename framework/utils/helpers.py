@@ -2,6 +2,7 @@
 
 import re
 import hashlib
+from pprint import pprint
 
 import unidecode
 
@@ -45,7 +46,7 @@ def html_tags(content, tag, attributes=None):
     )
 
 
-def debug_print(title, data, extremity=10, char='='):
+def debug_print(data, title=None, extremity=10, char='='):
     """Print helpful debug messages.
 
     Used for debugging element_dict originally, but may be evolved later.
@@ -53,7 +54,10 @@ def debug_print(title, data, extremity=10, char='='):
 
     # Title-seperator
     sep_s = char * extremity
-    title_s = '{} {} {}'.format(sep_s, title, sep_s)
+    if title:
+        title_s = '{} {} {}'.format(sep_s, title, sep_s)
+    else:
+        title_s = '{}'.format(sep_s * 2)
 
     # Print.
     print('\n' + title_s)
