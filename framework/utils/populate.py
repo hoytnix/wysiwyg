@@ -69,68 +69,68 @@ def populate_elements(templates):
     """Initialize Elements."""
 
     # 26-total items
-    d = {
-        1: [( 1,None,'head'),
-            ( 4,None,'body')
+    # level: (id, parent, order, tag)
+    struct = {
+        1: [( 1,None,1,'head'),
+            ( 4,None,2,'body')
            ],
-        2: [( 2, 1, 'title'),
-            ( 3, 1, 'meta'),
-            ( 5, 4, 'navbar'),
-            (20, 4, 'content'),
-            (23, 4, 'footer')
+        2: [( 2, 1, 1, 'title'),
+            ( 3, 1, 2, 'meta'),
+
+            ( 5, 4, 1, 'navbar'),
+            (20, 4, 2, 'content'),
+            (23, 4, 3, 'footer')
            ],
-        3: [( 6, 5, 'nav_head'),
-            ( 7, 5, 'nav'),
-            (14, 5, 'nav_right'),
-            (21,20, 'h1'),
-            (22,20, 'div'),
-            (24,23, 'ul'),
-            (27,23, 'p')
+        3: [( 6, 5, 1, 'nav_head'),
+            ( 7, 5, 2, 'nav'),
+            (14, 5, 3, 'nav_right'),
+
+            (21,20, 1, 'h1'),
+            (22,20, 2, 'div'),
+
+            (24,23, 1, 'ul'),
+            (27,23, 2, 'p')
            ],
-        4: [( 8, 7, 'brand'),
-            ( 9, 7, 'links'),
-            (13, 7, 'thing'),
-            (15,14, 'a'),
-            (16,14, 'ul'),
-            (19,14, 'a'),
-            (25,24, 'li'),
-            (26,24, 'li')
+        4: [( 8, 7, 1, 'brand'),
+            ( 9, 7, 2, 'links'),
+            (13, 7, 3, 'thing'),
+
+            (15,14, 1, 'a'),
+            (16,14, 2, 'ul'),
+            (19,14, 3, 'a'),
+
+            (25,24, 1, 'li'),
+            (26,24, 2, 'li')
            ],
-        5: [(10, 9, 'ul'),
-            (17,16, 'li'),
-            (18,16, 'li')
+        5: [(10, 9, 1, 'ul'),
+
+            (17,16, 1, 'li'),
+            (18,16, 2, 'li')
            ],
-        6: [(11,10, 'li'),
-            (12,10, 'li')
+        6: [(11,10, 1, 'li'),
+            (12,10, 2, 'li')
            ]
     }
 
-    k = {}
-    for level in d:
-        for o in d[level]:
-            k[o[0]] = None
+    store = {}
+    for level in struct:
+        for obj in struct[level]:
+            store[obj[0]] = None
 
-    fin_rows = 0
-    fin_templates = 0
-    while True:
-        tid = templates[fin_templates].id
-
-        for level in d:
-            elements = d[level]
-            order = 1
+    for template in templates:
+        for level in struct:
+            elements = struct[level]
 
             for element in elements:
-                if level == 1:  # top-row
-                    e = fixtures.blend(Element, tag=element[2], order=fin_templates, template=tid)
-                else:
-                    e = fixtures.blend(Element, tag=element[2], order=order, template=tid, parent=k[element[1]].id)
-                k[element[0]] = e
-                order += 1
+                _id = element[0]
+                parent = element[1]
+                v = {
+                    'template': template.id,
+                    'order': element[2],
+                    'tag': element[3]
+                }
+                if parent:
+                    v['parent'] = store[parent].id
 
-        # Break
-        fin_rows += 1
-        if fin_rows == displays:
-            fin_templates += 1
-            fin_rows = 0
-        if fin_templates == templates.__len__():
-            break
+                new_element = fixtures.blend(Element, **v)
+                store[_id] = new_element

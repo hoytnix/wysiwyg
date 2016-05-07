@@ -2,6 +2,24 @@
 
 + Ultimately can be reverse-engineered to a string-representation of HTML.
 + Level-order provides hierarchy and inheritance, two important concepts to DOM.
+
+They look a little like this:
+
+1: (-, (
+    2: (-, {
+            3: (-, None),
+            4: (-, {
+                    5: (-, None),
+                    6: (-, None)
+                    },
+            ),
+            7: (-, None)
+            }
+        )
+    )
+)
+
+NOTE: \-\ = self
 """
 
 from ..element import Element
@@ -10,120 +28,93 @@ from ...utils.helpers import debug_print
 
 
 def template_to_element_dict(template):
-    store = []
-
-    # 'Rows': Highest-level in order-heirarchy, where parent = None
-    rows = Element.query. \
+    # Elemnts at the highest-level. Specialized because parent=None.
+    top_elements = []
+    top_query = Element.query. \
         filter_by(template=template.id, parent=None). \
         order_by(Element.order).all()
-    row_n = 0
-    for row in rows:
-        store.append((row_n, row, []))
-        row_n += 1
 
-    # Create a level queue.
+    for top_element in top_query:
+        top_elements.append(top_element)
+
+    # Level queue.
     queue = {}
-    row_keys = [x[0] for x in store]
-    for row_key in row_keys:
-        # 1. Populate highest-level with the row itself.
-        queue[row_key] = {}
-        queue[row_key]['0'] = []
-        for k in store:
-            if k[0] == row_key:
-                queue[row_key]['0'].append(k[1])
+    for top_element in top_elements:
+        # 1. Populate highest-level with the element itself.
+        top_key = top_element.order
+        queue[top_key] = {}
+        queue[top_key][0] = []  # Level-0
+        queue[top_key][0].append(top_element)
 
         # 2. Recursively add children to next level.
         new_level = 1
         while True:
             do_continue = False
             first = True
-            for parent in queue[row_key][str(new_level - 1)]:
+
+            queue_prev_level = queue[top_key][(new_level-1)]
+            queue_curr_level = None
+            for parent in queue_prev_level:
                 children = parent.children
+
                 if children.__len__() > 0:
-                    do_continue = True
+                    do_continue = True  # If any in level have children.
                     if first:
-                        queue[row_key][str(new_level)] = []
+                        queue[top_key][(new_level)] = []
+                        queue_curr_level = queue[top_key][(new_level)]
                         first = False
+
                     for child in children:
-                        queue[row_key][str(new_level)].append(child)
+                        queue_curr_level.append(child)
+
             if not do_continue:  # None have children
                 break
             else:
                 new_level += 1
 
-    '''
-    1) Add top-level (0).
-    2) Recursive:
-        a) for element in row:
-        b)   for _element in row+1:
-        c)     if _element in element.children:
-        d)       win.
-
-
-
-    1: (-, (
-        2: (-, {
-                3: (-, None),
-                4: (-, {
-                        5: (-, None),
-                        6: (-, None)
-                        },
-                ),
-                7: (-, None)
-                }
-            )
-        )
-    )
-
-    NOTE: \-\ = self
-    '''
-
     # Debug verbosity.
     debug_print(queue, title='INITIAL QUEUE')
 
-    e_dict = {}
-    row_keys = [x[0] for x in store]
 
-    for row in row_keys:
+    e_dict = {}
+    visited = []
+    for top_key in queue:
         # First
-        e_dict[row] = {}
+        e_dict[top_key] = {}
 
         # Convenience pointers
-        r_cur = e_dict[row]
-        q_cur = queue[row]
+        r_cur = e_dict[top_key]
+        q_cur = queue[top_key]
 
         # Populate first for operation.
-        for e_cur in q_cur["0"]:
-            # print(e_cur.tag, e_cur.order)
+        for e_cur in q_cur[0]:
             r_cur[e_cur.order] = [e_cur, None]
 
         # Loop for each top-level element.
-        te_keys = [x for x in r_cur]
+        for te_key in r_cur:
+            te_cur = r_cur[te_key]  # Top-element pointer
+            # It looks like I have two top-element pointers here.
 
-        for te_key in te_keys:
-            # Top-element pointer
-            te_cur = r_cur[te_key]
-
-            # Tree-level counter
-            level = 1
-
-            steps = 1
             # Tree traversal
+            level = 1
             grandparent_pointer = [None]
             parent_pointer = [te_cur]
-            while True:  # Is not none
-                parent = parent_pointer[0]
+            while True:
+                # Step-counter.
+                steps = 0
 
-                curr_key = str(level)
-                prev_key = str(level - 1)
+                # Level-keys.
+                curr_key = (level)
+                prev_key = (level - 1)
 
                 # Sanity check.
                 if curr_key not in q_cur:
-                    # print('No more depth!')
+                    print('No more depth!')
                     break  # No more depth!
                     # Actualy, this should reset the level to the top.
 
-                # Queue-level pointers.
+                # Pointers.
+                parent = parent_pointer[0]
                 child_queue = q_cur[curr_key]
                 parent_queue = q_cur[prev_key]
 
@@ -131,12 +122,16 @@ def template_to_element_dict(template):
                 flag = None
                 for child in child_queue:
                     if child in parent[0].children:
-                        # First, add it.
+
+                        # First, change None to Dict.
                         if not type(parent[1]) is dict:
                             parent[1] = {}
+
+                        # Append the new child.
                         parent[1][child.order] = [child, None]
                         child_pointer = parent[1][child.order]
-                        # Then, change the pointer.
+
+                        # Check for more depth.
                         level += 1
                         if str(level) not in q_cur:  # no more depth
                             child_queue.remove(child)
@@ -144,9 +139,11 @@ def template_to_element_dict(template):
                         else:  # continue to next level
                             grandparent_pointer = [parent]
                             parent_pointer = [child_pointer]
-                        # First-child only.
+
+                        # Perform on one child only.
                         flag = True
                         break
+
                 if not flag:  # Has no children
                     # First, remove it.
                     parent_queue.remove(parent[0])
@@ -156,20 +153,13 @@ def template_to_element_dict(template):
                     level -= 1
                     parent_pointer = [grandparent_pointer[0]]
                     grandparent_pointer = [None]
-                    # print(level)
-
-                # if flag:
-                #     print('Next level.')
-                # else:
-                #     print('Previous level.')
-                # print(level, grandparent_pointer, parent_pointer)
 
                 # This should be the breaking point.
                 # TODO: Test this.
-
                 if grandparent_pointer[0] is None and parent_pointer[0] is None:
                     break
 
+                # Increment step.
                 steps += 1
 
     # Verbosity, thank you.
