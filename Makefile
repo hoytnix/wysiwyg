@@ -1,3 +1,17 @@
+# Continuous Integration:
+# =======================
+#
+# Adapted from - https://github.com/jacebrowning/template-python
+# Thanks @jacebrowning!
+#
+# Tooling consideration:
+# - pep8radius : PEP8 file-parts touched since last commit, previous commit, etc.
+# - rope       : Excellent refactoring.
+# - pyflakes   : Syntax-checker.
+# - sphinx     : Documentation generation.
+# - napoleon   : Google's Python styling for Sphinx.
+#
+
 # Project settings
 PROJECT := anavah
 PACKAGE := framework
@@ -16,38 +30,25 @@ COMBINED_TEST_COVERAGE := 100
 
 # System paths
 PLATFORM := $(shell python -c 'import sys; print(sys.platform)')
-ifneq ($(findstring win32, $(PLATFORM)), )
-	WINDOWS := 1
-	SYS_PYTHON_DIR := C:\\Python$(PYTHON_MAJOR)$(PYTHON_MINOR)
-	SYS_PYTHON := $(SYS_PYTHON_DIR)\\python.exe
-	# https://bugs.launchpad.net/virtualenv/+bug/449537
-	export TCL_LIBRARY=$(SYS_PYTHON_DIR)\\tcl\\tcl8.5
+ifneq ($(findstring darwin, $(PLATFORM)), )
+	MAC := 1
 else
-	ifneq ($(findstring darwin, $(PLATFORM)), )
-		MAC := 1
-	else
-		LINUX := 1
-	endif
-	SYS_PYTHON := python$(PYTHON_MAJOR)
-	ifdef PYTHON_MINOR
-		SYS_PYTHON := $(SYS_PYTHON).$(PYTHON_MINOR)
-	endif
+	LINUX := 1
+endif
+SYS_PYTHON := python$(PYTHON_MAJOR)
+ifdef PYTHON_MINOR
+	SYS_PYTHON := $(SYS_PYTHON).$(PYTHON_MINOR)
 endif
 
+
 # Virtual environment paths
-ENV := env
-ifneq ($(findstring win32, $(PLATFORM)), )
-	BIN := $(ENV)/Scripts
-	ACTIVATE := $(BIN)/activate.bat
-	OPEN := cmd /c start
+ENV := ~/.venvs/ci
+BIN := $(ENV)/bin
+ACTIVATE := . $(BIN)/activate
+ifneq ($(findstring cygwin, $(PLATFORM)), )
+	OPEN := cygstart
 else
-	BIN := $(ENV)/bin
-	ACTIVATE := . $(BIN)/activate
-	ifneq ($(findstring cygwin, $(PLATFORM)), )
-		OPEN := cygstart
-	else
-		OPEN := open
-	endif
+	OPEN := open
 endif
 
 # Virtual environment executables
@@ -55,13 +56,13 @@ ifndef TRAVIS
 	BIN_ := $(BIN)/
 endif
 PYTHON := $(BIN_)python
-PIP := $(BIN_)pip -q
+PIP := $(BIN_)pip
 EASY_INSTALL := $(BIN_)easy_install
 PEP8 := $(BIN_)pep8
 PEP257 := $(BIN_)pep257
-PYLINT := $(BIN_)pylint
-PYTEST := $(BIN_)py.test
-COVERAGE := $(BIN_)coverage
+# PYLINT := $(BIN_)pylint
+# PYTEST := $(BIN_)py.test
+# COVERAGE := $(BIN_)coverage
 
 # Flags for PHONY targets
 INSTALLED_FLAG := $(ENV)/.installed
@@ -86,7 +87,7 @@ else
 ci: check clean #test tests #doc
 endif
 
-# Development Installation #####################################################
+# Environment Installation #####################################################
 
 .PHONY: env
 env: $(PIP) $(INSTALLED_FLAG)
@@ -95,7 +96,10 @@ $(INSTALLED_FLAG): Makefile setup.py requirements.txt
 	@ touch $(INSTALLED_FLAG)  # flag to indicate package is installed
 
 $(PIP):
-	$(SYS_PYTHON) -m venv --clear $(ENV)
+	$(SYS_PYTHON) -m venv $(ENV)
+
+.PHONY: upgrade_pip
+upgrade_pip:
 	$(PIP) install --upgrade pip setuptools
 
 # Tools Installation ###########################################################
@@ -106,14 +110,8 @@ depends: depends-ci depends-dev
 .PHONY: depends-ci
 depends-ci: env Makefile $(DEPENDS_CI_FLAG)
 $(DEPENDS_CI_FLAG): Makefile
-	$(PIP) install --upgrade pep8 pep257 pylint coverage pytest pytest-describe pytest-expecter pytest-cov pytest-random pytest-runfailed
+	$(PIP) install pep8 pep257 #pylint coverage 
 	@ touch $(DEPENDS_CI_FLAG)  # flag to indicate dependencies are installed
-
-.PHONY: depends-dev
-depends-dev: env Makefile $(DEPENDS_DEV_FLAG)
-$(DEPENDS_DEV_FLAG): Makefile
-	$(PIP) install --upgrade pip pep8radius wheel pyinotify
-	@ touch $(DEPENDS_DEV_FLAG)  # flag to indicate dependencies are installed
 
 # Static Analysis ##############################################################
 
