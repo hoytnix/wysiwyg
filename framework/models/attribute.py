@@ -1,11 +1,14 @@
-"""Key-value for HTML-attributes."""
+"""Key-value of HTML-property.
+
+Example:
+<p class="new">...
+`class` is the key, and `new` is the value.
+"""
 
 from ..extensions import db
 
 
 class Attribute(db.Model):
-    """TODO."""
-
     __tablename__ = 'attributes'
 
     id = db.Column(db.Integer, primary_key=True)

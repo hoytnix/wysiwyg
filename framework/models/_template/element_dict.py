@@ -1,8 +1,13 @@
-"""Convert Templates to HTML, and HTML to Templates."""
+"""An element_dict is a level-order structure to represent HTML.
+
++ Ultimately can be reverse-engineered to a string-representation of HTML.
++ Level-order provides hierarchy and inheritance, two important concepts to DOM.
+"""
 
 from ..element import Element
 
 from ...utils.helpers import debug_print
+
 
 def template_to_element_dict(template):
     store = []

@@ -17,7 +17,7 @@ def to_template(self):
 
     :param html: String.
 
-    :output template: ID of returned Templated.
+    :output template: ID of returned Template.
     """
 
     pass

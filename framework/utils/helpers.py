@@ -50,6 +50,9 @@ def debug_print(data, title=None, extremity=10, char='='):
     """Print helpful debug messages.
 
     Used for debugging element_dict originally, but may be evolved later.
+
+    TODO:
+    + Implemenet console-logging.
     """
 
     # Title-seperator

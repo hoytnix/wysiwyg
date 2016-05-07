@@ -1,12 +1,10 @@
-"""Key (parent) => value (path) for directing URLs."""
+"""Map path-strings to template-ids."""
 
 from ..extensions import db
 from .template import Template
 
 
 class Route(db.Model):
-    """TODO."""
-
     __tablename__ = 'routes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +13,4 @@ class Route(db.Model):
 
     @property
     def child(self):
-        """TODO."""
-
         return Template.query.filter_by(parent=self.id).first()

@@ -1,11 +1,9 @@
-"""Basic element of an HTML."""
+"""HTML-tag with hierarchy and inheritance."""
 
 from ..extensions import db
 
 
 class Element(db.Model):
-    """TODO."""
-
     __tablename__ = 'elements'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -16,14 +14,10 @@ class Element(db.Model):
 
     @property
     def children(self):
-        """TODO."""
-
         return Element.query.filter_by(parent=self.id).all()
 
     @property
     def attribute_dict(self):
-        """TODO."""
-
         d = {}
         attributes = Attribute.query.filter_by(parent=self.id).all()
         for attribute in attributes:
@@ -31,6 +25,4 @@ class Element(db.Model):
         return d
 
     def __repr__(self):
-        """Return a string of the element's tag."""
-
         return '<{}>'.format(self.tag)

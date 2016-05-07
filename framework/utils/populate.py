@@ -1,7 +1,6 @@
 """Persistent data fixtures.
 
 TODO:
-+   Async-like architecture.
 +   Keep old data; quit dropping *everything*.
 """
 
@@ -17,17 +16,12 @@ from ..models.site import Site
 from ..models.template import Template
 
 
-'''
-    populate: performs build commands
-    build:    provides structures
-'''
-
 displays = 2
 display_num = range(displays)  # Unresponsive > 3
 
 
 def populate_all():
-    """Initalize the async worker."""
+    """Perform all table populations."""
 
     for iteration in display_num:
         site = fixtures.blend(Site)

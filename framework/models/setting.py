@@ -1,11 +1,9 @@
-"""Key-value store for Sites."""
+"""Key-value of a site-property."""
 
 from ..extensions import db
 
 
 class Setting(db.Model):
-    """TODO."""
-
     __tablename__ = 'settings'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +13,4 @@ class Setting(db.Model):
 
     @property
     def name(self):
-        """TODO."""
-
         return self.key
