@@ -41,6 +41,6 @@ def route_detail(site_url, path):
     route = Route.query.filter_by(parent=site.id).first()
     template = route.child
 
-    template.element_dict
+    template.element_dict  # Does nothing but call the function for the verbosity.
 
     return render_template('route_detail.html', **settings)

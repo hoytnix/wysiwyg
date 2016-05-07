@@ -13,7 +13,7 @@ class Config:
         # SQLAlchemy
         self.SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{user}:{pwd}@{host}:{port}/{db}'.format(
             user='anavah',
-            pwd='seal-hello-boat',
+            pwd='seal-hello-boat',  # TODO: This is a bad idea.
             host='anavah-dev.celgo7igyrro.us-east-1.rds.amazonaws.com',
             port='3306',
             db='anavah'
