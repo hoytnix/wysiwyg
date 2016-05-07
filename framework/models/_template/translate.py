@@ -11,6 +11,7 @@ def to_html(self):
 
     pass
 
+
 def to_template(self):
     """Convert HTML to a Template's elements, attributes, etc.
 
@@ -20,4 +21,3 @@ def to_template(self):
     """
 
     pass
-
