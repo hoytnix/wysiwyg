@@ -26,6 +26,36 @@ from ..element import Element
 
 from ...utils.helpers import debug_print
 
+from collections import defaultdict
+from pprint import pprint
+
+
+class Tree:
+    """https://gist.github.com/hrldcpr/2012250"""
+
+    def __init__(self):
+        self.store = self.tree_struct()
+        self.add(['element_dict'])
+
+    def add(self, keys):
+        _keys = ['element_dict']
+        for key in keys:
+            _keys.append(key)
+
+        t = self.store
+        for key in _keys:
+            t = t[key]
+
+    def print(self):
+        d = self.dicts(self.store)
+        pprint(d, indent=4, width=80)
+
+    def dicts(self, t):
+        return {k: self.dicts(t[k]) for k in t}
+
+    def tree_struct(self):
+        return defaultdict(self.tree_struct)
+
 
 def template_to_element_dict(template):
     # Elemnts at the highest-level. Specialized because parent=None.
@@ -76,93 +106,91 @@ def template_to_element_dict(template):
     debug_print(queue, title='INITIAL QUEUE')
 
 
-    e_dict = {}
-    visited = []
-    for top_key in queue:
-        # First
-        e_dict[top_key] = {}
+    e_dict = Tree()  # returnable
+    pointer = []  # [n-parent, parent, child, child-n, ...]
 
-        # Convenience pointers
-        r_cur = e_dict[top_key]
-        q_cur = queue[top_key]
+    for row_key in queue:
+        '''Indexes: e_dict[row_key]'''
 
-        # Populate first for operation.
-        for e_cur in q_cur[0]:
-            r_cur[e_cur.order] = [e_cur, None]
+        pointer = []  # reset
 
-        # Loop for each top-level element.
-        for te_key in r_cur:
-            te_cur = r_cur[te_key]  # Top-element pointer
-            # It looks like I have two top-element pointers here.
+        # Add the top-level.
+        row = queue[row_key]
+        top_element = row[0][0]
+        pointer.append(top_element)
+        e_dict.add(pointer)
 
-            # Tree traversal
-            level = 1
-            grandparent_pointer = [None]
-            parent_pointer = [te_cur]
-            while True:
-                # Step-counter.
+        # debug_step = 100
+        # steps = 0
+        queue_level = 1
+        while True:
+            steps += 1
+
+            if queue[row_key][1].__len__() == 0:
+                queue[row_key][0] = []
+
+            if queue[row_key][0].__len__() == 0:
                 steps = 0
+                queue_level = 0
+                break
 
-                # Level-keys.
-                curr_key = (level)
-                prev_key = (level - 1)
+            parent = pointer[-1]
+            parent_queue = queue[row_key][queue_level - 1]
 
-                # Sanity check.
-                if curr_key not in q_cur:
-                    print('No more depth!')
-                    break  # No more depth!
-                    # Actualy, this should reset the level to the top.
+            if queue_level not in queue[row_key]:
+                # print('{}: Inexistent level'.format(queue_level))
 
-                # Pointers.
-                parent = parent_pointer[0]
-                child_queue = q_cur[curr_key]
-                parent_queue = q_cur[prev_key]
+                # if steps == debug_step:
+                #     print(parent)
+                #     print(parent_queue)
+                #     #return None
 
-                # Relationship comparison
-                flag = None
-                for child in child_queue:
-                    if child in parent[0].children:
+                queue_level -= 1
+                parent_queue.remove(parent)
+                pointer = pointer[:-1]
+                continue
 
-                        # First, change None to Dict.
-                        if not type(parent[1]) is dict:
-                            parent[1] = {}
+            # TODO: Won't work for a row with no children.
+            child_queue  = queue[row_key][queue_level]
 
-                        # Append the new child.
-                        parent[1][child.order] = [child, None]
-                        child_pointer = parent[1][child.order]
+            # Relationship comparison
+            found_children = False
+            for child in child_queue:
+                if child in parent.children:
+                    # print('{}: Found a child'.format(queue_level))
 
-                        # Check for more depth.
-                        level += 1
-                        if str(level) not in q_cur:  # no more depth
-                            child_queue.remove(child)
-                            level -= 1
-                        else:  # continue to next level
-                            grandparent_pointer = [parent]
-                            parent_pointer = [child_pointer]
+                    # if steps == debug_step:
+                    #     print(parent)
+                    #     print(parent_queue)
+                    #     #return None
 
-                        # Perform on one child only.
-                        flag = True
-                        break
+                    found_children = True
+                    pointer.append(child)
+                    e_dict.add(pointer)
 
-                if not flag:  # Has no children
-                    # First, remove it.
-                    parent_queue.remove(parent[0])
-                    debug_print(q_cur, title='QUEUE {}'.format(steps))
+                    queue_level += 1
 
-                    # Then, change the pointer.
-                    level -= 1
-                    parent_pointer = [grandparent_pointer[0]]
-                    grandparent_pointer = [None]
+                    break  # Only perform for one element per loop.
 
-                # This should be the breaking point.
-                # TODO: Test this.
-                if grandparent_pointer[0] is None and parent_pointer[0] is None:
-                    break
+            if not found_children:
+                # print('{}: No children found'.format(queue_level))
 
-                # Increment step.
-                steps += 1
+                # if steps == debug_step:
+                #     print(parent)
+                #     print(parent_queue)
+                #     #return None
+
+                queue_level -= 1
+                parent_queue.remove(parent)
+                pointer = pointer[:-1]
+
+            # if steps == debug_step:
+            #     steps = 0
+            #     queue_level = 0
+            #     break
+
 
     # Verbosity, thank you.
-    debug_print(e_dict, title='ELEMENT DICT')
+    # e_dict.print()
 
     return e_dict
