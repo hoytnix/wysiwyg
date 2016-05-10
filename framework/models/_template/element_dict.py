@@ -5,21 +5,22 @@
 
 They look a little like this:
 
-1: (-, (
-    2: (-, {
-            3: (-, None),
-            4: (-, {
-                    5: (-, None),
-                    6: (-, None)
-                    },
-            ),
-            7: (-, None)
-            }
-        )
-    )
-)
-
-NOTE: \-\ = self
+{'element_dict': {'element_dict': {},
+                  (1, <head>): {(1, <title>): {}, (2, <meta>): {}},
+                  (2, <body>): {(1, <navbar>): {(1, <nav_head>): {},
+                                                (2, <nav>): {(1, <brand>): {},
+                                                             (2, <links>): {(1, <ul>): {(1, <li>): {},
+                                                                                        (2, <li>): {}}},
+                                                             (3, <thing>): {}},
+                                                (3, <nav_right>): {(1, <a>): {},
+                                                                   (2, <ul>): {(1, <li>): {},
+                                                                               (2, <li>): {}},
+                                                                   (3, <a>): {}}},
+                                (2, <content>): {(1, <h1>): {}, (2, <div>): {}},
+                                (3, <footer>): {(1, <ul>): {(1, <li>): {},
+                                                            (2, <li>): {}},
+                                                (2, <p>): {}}},
+                  (3, <childless>): {}}}
 """
 
 from ..element import Element
@@ -73,124 +74,91 @@ def template_to_element_dict(template):
         # 1. Populate highest-level with the element itself.
         top_key = top_element.order
         queue[top_key] = {}
-        queue[top_key][0] = []  # Level-0
-        queue[top_key][0].append(top_element)
+        queue_cursor = queue[top_key]
+        queue_cursor[0] = top_element
 
-        # 2. Recursively add children to next level.
-        new_level = 1
+        # 2. Top-element already has a `children` function:
+        top_children = top_element.children
+        if top_children.__len__() > 0:
+            queue_cursor[1] = top_children
+        else:
+            break  # No reason to continue.
+
+        # 3. Recursively add children to next level.
+        new_level = 2
         while True:
-            do_continue = False
+            has_children = False
             first = True
 
-            queue_prev_level = queue[top_key][(new_level-1)]
-            queue_curr_level = None
-            for parent in queue_prev_level:
+            queue_parent = queue_cursor[(new_level - 1)]
+            queue_child = None
+            for parent in queue_parent:
                 children = parent.children
 
                 if children.__len__() > 0:
-                    do_continue = True  # If any in level have children.
+                    has_children = True
+
                     if first:
-                        queue[top_key][(new_level)] = []
-                        queue_curr_level = queue[top_key][(new_level)]
+                        queue_cursor[new_level] = []
+                        queue_child = queue_cursor[new_level]
                         first = False
 
                     for child in children:
-                        queue_curr_level.append(child)
+                        queue_child.append(child)
 
-            if not do_continue:  # None have children
+            if not has_children:
                 break
             else:
                 new_level += 1
-
-    # Debug verbosity.
-    debug_print(queue, title='INITIAL QUEUE')
-
 
     e_dict = Tree()  # returnable
     pointer = []  # [n-parent, parent, child, child-n, ...]
 
     for row_key in queue:
-        '''Indexes: e_dict[row_key]'''
-
         pointer = []  # reset
+        queue_row = queue[row_key]
 
         # Add the top-level.
-        row = queue[row_key]
-        top_element = row[0][0]
-        pointer.append(top_element)
+        top_element = queue_row[0]
+        top_element_key = (top_element.order, top_element)
+        pointer.append(top_element_key)
         e_dict.add(pointer)
 
-        # debug_step = 100
-        # steps = 0
         queue_level = 1
         while True:
-            steps += 1
+            if 1 not in queue_row:
+                break  # No reason to continue.
 
-            if queue[row_key][1].__len__() == 0:
-                queue[row_key][0] = []
-
-            if queue[row_key][0].__len__() == 0:
-                steps = 0
-                queue_level = 0
+            if queue_row[1].__len__() == 0:
                 break
 
-            parent = pointer[-1]
-            parent_queue = queue[row_key][queue_level - 1]
+            parent = pointer[-1][1]
+            parent_queue = queue_row[queue_level - 1]
 
-            if queue_level not in queue[row_key]:
-                # print('{}: Inexistent level'.format(queue_level))
-
-                # if steps == debug_step:
-                #     print(parent)
-                #     print(parent_queue)
-                #     #return None
-
+            if queue_level not in queue_row:
                 queue_level -= 1
                 parent_queue.remove(parent)
                 pointer = pointer[:-1]
                 continue
 
-            # TODO: Won't work for a row with no children.
-            child_queue  = queue[row_key][queue_level]
+            # Reserved until after a level-check to avoid unnecessary action.
+            parent_children = parent.children
+            child_queue = queue_row[queue_level]
 
-            # Relationship comparison
             found_children = False
             for child in child_queue:
-                if child in parent.children:
-                    # print('{}: Found a child'.format(queue_level))
-
-                    # if steps == debug_step:
-                    #     print(parent)
-                    #     print(parent_queue)
-                    #     #return None
-
+                if child in parent_children:
                     found_children = True
-                    pointer.append(child)
-                    e_dict.add(pointer)
-
                     queue_level += 1
+                    child_key = (child.order, child)
+                    pointer.append(child_key)
+                    e_dict.add(pointer)
 
                     break  # Only perform for one element per loop.
 
             if not found_children:
-                # print('{}: No children found'.format(queue_level))
-
-                # if steps == debug_step:
-                #     print(parent)
-                #     print(parent_queue)
-                #     #return None
-
                 queue_level -= 1
                 parent_queue.remove(parent)
                 pointer = pointer[:-1]
-
-            # if steps == debug_step:
-            #     steps = 0
-            #     queue_level = 0
-            #     break
-
-
-    # Verbosity, thank you.
-    # e_dict.print()
 
     return e_dict

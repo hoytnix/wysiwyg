@@ -72,7 +72,8 @@ def populate_elements(templates):
     # level: (id, parent, order, tag)
     struct = {
         1: [( 1,None,1,'head'),
-            ( 4,None,2,'body')
+            ( 4,None,2,'body'),
+            (99,None,3,'childless')
            ],
         2: [( 2, 1, 1, 'title'),
             ( 3, 1, 2, 'meta'),
