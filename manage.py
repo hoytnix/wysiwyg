@@ -7,7 +7,7 @@ import click
 
 from framework.app import create_app
 from framework.extensions import db
-from framework.utils.imports import all_models
+from framework.utils.imports import all_models, all_blueprints
 from framework.utils.populate import populate_all
 
 
@@ -54,7 +54,7 @@ def test():
 
     from framework.utils.imports import all_models
 
-    print(all_models())
+    print(all_blueprints())
 
 
 if __name__ == '__main__':

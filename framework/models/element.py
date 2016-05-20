@@ -26,3 +26,14 @@ class Element(db.Model):
 
     def __repr__(self):
         return '<{}>'.format(self.tag)
+
+
+class Attribute(db.Model):
+    """Key-value of an HTML-property."""
+
+    __tablename__ = 'attributes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(255), nullable=False)
+    value = db.Column(db.String(255), nullable=False)
+    parent = db.Column(db.Integer, nullable=False)

@@ -1,10 +1,9 @@
-"""Abstract class to provide inheritance."""
-
 from ..extensions import db
-from .setting import Setting
 
 
 class Site(db.Model):
+    """Abstract class to provide inheritance."""
+
     __tablename__ = 'sites'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -29,3 +28,17 @@ class Site(db.Model):
             site_id=self.id,
             site_title=self.setting_value('Title')
         )
+
+class Setting(db.Model):
+    """Key-value of a site-property."""
+
+    __tablename__ = 'settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    site_id = db.Column(db.Integer, nullable=False)
+    key = db.Column(db.String(255), nullable=False)
+    value = db.Column(db.String(255), nullable=False)
+
+    @property
+    def name(self):
+        return self.key

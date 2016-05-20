@@ -4,13 +4,11 @@ from flask import Flask
 
 from flask_admin.contrib.sqla import ModelView
 
-from . import blueprint, config, extensions
-from .blueprint import blueprints
 from .config import Config
 from .extensions import admin, db, fixtures
 
 from .utils.fs import abs_fs
-from .utils.imports import all_models
+from .utils.imports import all_models, all_blueprints
 
 
 def create_app():
@@ -23,7 +21,7 @@ def create_app():
     app = Flask(import_name=__name__, template_folder=abs_fs['templates'])
 
     # Attempt to configure from python-object.
-    app.config.from_object(config.Config())
+    app.config.from_object(Config())
 
     configure_blueprints(app)
     configure_extensions(app)
@@ -37,7 +35,9 @@ def configure_blueprints(app):
     TODO: Iterate through an index.
     """
 
-    app.register_blueprint(blueprint.blueprints, url_prefix='')
+    blueprints = all_blueprints()
+    for blueprint in blueprints:
+        app.register_blueprint(blueprint, url_prefix='')
 
 
 def configure_extensions(app):

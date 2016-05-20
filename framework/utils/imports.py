@@ -30,3 +30,26 @@ def all_models():
             pass
 
     return models
+
+
+def all_blueprints():
+    """A list of Blueprint objects."""
+
+    namespace = __import__('framework').blueprints
+
+    modules = []
+    for name, obj in inspect.getmembers(namespace):
+        if inspect.ismodule(obj):
+            modules.append(obj)
+
+    blueprints = []
+    for module in modules:
+        for name, obj in inspect.getmembers(module):
+            try:
+                if obj.template_folder:
+                    if obj not in blueprints:
+                        blueprints.append(obj)
+            except:
+                pass
+
+    return blueprints

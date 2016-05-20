@@ -14,7 +14,9 @@ if sys.version_info < PYTHON_VERSION:  # pragma: no cover (manual test)
 
 try:
     # pylint: disable=wrong-import-position
-    from . import app, blueprint, config, extensions, models
+    from . import app, config, extensions
+    from .blueprints import route, site
+    from .models import element, route, site, template
     from .utils import fs, helpers, imports, populate
 except ImportError:
     pass

@@ -9,6 +9,7 @@ Templates should:
 
 from ..extensions import db
 from ._template.element_dict import template_to_element_dict
+from ._template.translate import element_dict_to_html
 
 
 class Template(db.Model):
@@ -19,8 +20,9 @@ class Template(db.Model):
     parent = db.Column(db.Integer, nullable=False)
 
     @property
-    def element_dict(self):
-        return template_to_element_dict(template=self)
+    def html(self):
+        element_dict = template_to_element_dict(template=self)
+        return element_dict_to_html(element_dict)
 
     @property
     def owner(self):

@@ -8,11 +8,9 @@ from .. import extensions, models
 from ..extensions import fixtures
 from .imports import all_models
 
-from ..models.attribute import Attribute
-from ..models.element import Element
+from ..models.element import Element, Attribute
 from ..models.route import Route
-from ..models.setting import Setting
-from ..models.site import Site
+from ..models.site import Site, Setting
 from ..models.template import Template
 
 
